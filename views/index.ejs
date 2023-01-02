@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/index.css">
+    <title>Prestiti</title>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><img class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+            <div class="popup">
+                <button role="button" id="addDataBtn" value="0" class="btn-s2 btn btn-add "><span class="p-e-none"><img height="10px" width="10px" src="/assets/svg/plus-icon.svg"></span></button>
+                <button id="menuBtn" value="0" class="btn-s1 btn">Menu</button>
+            </div>
+        </nav>
+    </header>
+
+    <div id="addData" class="add-data none">
+        <div>
+            <form action="/data" method="post">
+                <h4>New Person </h4>
+                <div>
+                    <input class="in-s1" name="name" placeholder="Nome" type="text">
+                </div>
+
+                <div class="sum-add">
+                    <select class="in-s1" name="sign">
+                        <option value="1" selected>-</option>
+                        <option value="2">+</option>
+                    </select>
+                    <input class="in-s1" step="0.01" name="sum" placeholder="Somma" type="number"> <p>€</p>
+                </div>
+
+                <% if (error == 1) { %> <p class="error"> Input inserito non valido </p> <% } %> 
+
+                <button id="addDataSB" <% if (error == 1) { %> value="1" <% } else { %> value="0" <% } %> class="btn-s1 btn" type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="menu" class="menu none">
+        <div>
+            <h4>Menu</h4>
+            <div class="content">
+                <a class="flex-c btn btn-s2" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+        
+
+    <main>
+        <article class="data">
+            <% array.forEach((element) => { %> 
+
+                <div id="<%=element.id%>">
+                    <div id="<%="e" + element.id%>" class="edit-pop none">
+                        
+                        <main>
+                            <form method="post" action="/dataedit">
+                                <input name="id" class="none" type="text" value="<%= element.id %>">
+                                
+                                <section class="edit-pop-header">
+                                    <div>
+                                        <h4>Edit</h4>
+                                    </div>
+                                    <div class="delete-btn">
+                                        <button class="transparent-c-btn flex-c btn" name="sBtn" type="submit" value="2"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/bin-icon.svg"></span></button>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <select class="in-s1" name="operation">
+                                        <option value="1" selected>Add Value</option>
+                                        <option value="2">Set Value</option>
+                                    </select>
+                                </section>
+
+                                <section>
+                                    <div class="sum">
+                                        <select class="in-s1" name="sign">
+                                            <option value="1" selected>-</option>
+                                            <option value="2">+</option>
+                                        </select>
+                                        
+                                        <input class="in-s1" name="sum" step="0.01" placeholder="Somma" type="number" id="<%="eIN" + element.id%>"> <p>€</p>
+                                    </div>
+                                </section>
+    
+                                <section class="error flex-c">
+                                    <% if (error == 2) { if (element.id == errorID) { %> <p>Input inserito non valido.</p> <% }} %> 
+                                </section>
+    
+                                <section class="e-pop-Btns">
+                                    <button class="btn-s2 btn" type="button" value="<%=element.id%>" id="editUN">undo</button>
+                                    <button class="btn-s1 btn" name="sBtn" type="submit" value="1">save</button>    
+                                </section>
+                                
+                            </form>
+                        </main>
+                    </div>
+
+                    <main>
+                        <article class="data-head">
+                            <section class="name">
+                                <p> <%=element.name%> </p>
+                            </section>
+                            <section class="edit-btn">
+                                <button id="editBtn" class="transparent-c-btn flex-c btn" value="<%=element.id%>"><span class="p-e-none"><img height="22px" width="22px" src="/assets/svg/edit-icon.svg"></span></button>
+                            </section>
+                            
+                        </article>
+
+                        <article class="money-c">
+
+                            <% let n; let nStr = element.sum.toString(); let prt = nStr.split('.'); let intPrt = prt[0]; let decPrt = prt[1] || '00'; intPrt = intPrt.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); n = intPrt + ',' + decPrt; %>
+                            <p class="count <% if (element.sum > 0) { %>green<% } else if (element.sum < 0) { %>red<% } %> "> <%= n %> </p> <p class="simbol">€</p>  
+
+                        </article>
+                    </main>
+                </div>
+            <% }); %>
+        </article>
+    </main>
+
+
+    
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

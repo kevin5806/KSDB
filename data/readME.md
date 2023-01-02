@@ -1,0 +1,1 @@
+non lasciare mai il file json senza le parentesi quadre al suo interno [] se proprio si devono cancellare tutti i dati
