@@ -126,7 +126,7 @@ nav {
 }
 
 .money-c .count {
-    font-size: var(--fs-big);
+    font-size: 30px;
     font-weight: var(--fw-medium);
 }
 

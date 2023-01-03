@@ -12,7 +12,7 @@ const fs = require('fs');
 const app = express();
 
 //parametri del server
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3000;
 
 //abilita i proxy
 /*

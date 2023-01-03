@@ -64,5 +64,10 @@ document.querySelectorAll('#addDataBtn').forEach(button => {
     });
 });
 
+/* document.querySelector('#sumAddIN').addEventListener('input', function(e) {
+    this.value = this.value.slice(0,6);
+  }); */
+  
+
 /*esegue il codice al suo interno se uno dei pulsanti SEND della sezione 
 EDIT di un casella viene premuta ("event.target.value") = id della casella*/

@@ -28,7 +28,7 @@
             <form action="/data" method="post">
                 <h4>New Person </h4>
                 <div>
-                    <input class="in-s1" name="name" placeholder="Nome" type="text">
+                    <input class="in-s1" name="name" maxlength="10" placeholder="Nome" type="text">
                 </div>
 
                 <div class="sum-add">
@@ -36,7 +36,7 @@
                         <option value="1" selected>-</option>
                         <option value="2">+</option>
                     </select>
-                    <input class="in-s1" step="0.01" name="sum" placeholder="Somma" type="number"> <p>€</p>
+                    <input class="in-s1" max="999999.99" step="0.01" name="sum" placeholder="Somma" type="number"> <p>€</p>
                 </div>
 
                 <% if (error == 1) { %> <p class="error"> Input inserito non valido </p> <% } %> 
