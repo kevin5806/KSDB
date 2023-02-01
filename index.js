@@ -6,8 +6,6 @@ const fs = require('fs');
 //rende possibile il salvataggio delle sessioni in dei file nella memoria del server
 //const FileStore = require('session-file-store')(session);//
 
-
-
 //creazione dell app
 const app = express();
 
@@ -54,7 +52,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
 
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 
 })
 
@@ -73,7 +71,7 @@ app.get('/dashboard', (req, res) => {
             //error = 2 > imput inserito nel edit non valido
             res.render('index', {array: data, error: req.query.error, errorID: req.query.id});
         });
-    
+	
 
     } else { //se non autenticato
 
