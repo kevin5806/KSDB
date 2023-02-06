@@ -31,7 +31,7 @@ app.use(express.static(__static));
 // ##################### Database ###########################
 
 //url del database
-const mongoURL = 'mongodb+srv://kevinserv:?Es2H3ca48nKbPeShVmYq@kevincluster.svejfwa.mongodb.net/KSbebt';
+const mongoURL = 'mongodb+srv://kevinserv:?clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/KSbebt';
 
 //rimuove un errore di mongoose nella versione attuale
 mongoose.set('strictQuery', true);
