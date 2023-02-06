@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
-const uaParser = require('ua-parser-js')
 
 //COSTANTI APP
 
