@@ -1,5 +1,7 @@
 @import url(main.css);
 
+@import url(index/menu.css);
+
 body > main {
     position: relative;
     margin-top: 74px !important;
@@ -194,7 +196,6 @@ nav {
     }
 }
 
-
 .add-data form {
     display: grid;
     row-gap: 1rem;
@@ -255,42 +256,4 @@ nav {
 
 .btn-add-o img {
     rotate: 45deg;
-}
-
-.menu {
-    display: flex;
-    justify-content: right;
-}
-
-.menu > div {
-    position: fixed;
-    z-index: 2;
-    top: 6rem;
-    margin:  0 1.2rem 0 1.2rem;
-    background-color: white; 
-    width: 15rem;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 12px 48px rgba(0,0,0,.15);
-}
-
-.content {
-    display: grid;
-    padding-top: 1rem;
-    height: 100%;
-    width: 100%;
-}
-
-.menu .content > a:hover, .menu .content > a:focus {
-    background-color: #f6f6f8;
-}
-
-@media (width < 500px)  {
-
-    .menu {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
 }

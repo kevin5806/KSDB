@@ -1,0 +1,103 @@
+.menu {
+    display: flex;
+    justify-content: right;
+}
+
+.menu > div {
+    position: fixed;
+    z-index: 2;
+    top: 6rem;
+    margin:  0 1.2rem 0 1.2rem;
+    background-color: white; 
+    width: 15rem;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 12px 48px rgba(0,0,0,.15);
+}
+
+.content {
+    display: grid;
+    row-gap: 10px;
+    padding-top: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.menu .content > a:hover, .menu .content > a:focus {
+    background-color: #f6f6f8;
+}
+
+@media (width < 500px)  {
+
+    .menu {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+}
+
+.log-menu {
+    position: fixed;
+    z-index: 3;
+
+    height: 100%;
+    width: 100%;
+    
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.log-menu header {
+    display: flex;
+    justify-content: space-between ;
+
+    background-color: #f6f6f8;
+    border-bottom: 1px solid rgb(229, 231, 237);
+
+    padding: 1rem;
+}
+
+.log-menu > div {
+    overflow: hidden;
+    background-color: white; 
+    border-radius: 8px;
+    box-shadow: 0 12px 48px rgba(0,0,0,.15);
+
+    max-height: 80%;
+    max-width: 80%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+@media (width < 500px)  {
+    .log-menu > div {
+        max-height: 95%;
+        max-width: 95%;
+    }
+}
+
+.log-menu > div main {
+    display: grid;
+    row-gap: 10px;
+    padding: 1rem 1rem 1rem 1rem;
+    overflow-y: scroll;
+}
+
+.log-menu > div main article {
+    display: grid;
+    row-gap: 10px;
+    background-color: rgb(246, 246, 248);
+    padding: 10px;
+    border-radius: 8px;
+    line-height: 20px;
+}
+
+.log-menu > div main article span {
+    display: flex;
+    column-gap: 10px;
+}
+
+.log-menu > div main article .sub {
+    font-weight: var(--fw-medium);
+}
