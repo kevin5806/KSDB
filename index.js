@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //serve per servire file statici accessibili da tutte le pagina del sito
-const __static =  __dirname + '/static'; 
+const __static =  __dirname + '/public'; 
 
 app.use(express.static(__static));
 
