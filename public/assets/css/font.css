@@ -5,3 +5,15 @@
     font-display: swap;
     src: url(../fonts/VarelaRound-Regular.ttf);
 }
+
+@font-face {
+    font-family: 'Brightness';
+    font-style: normal;
+    src: url(../fonts/Brightness.ttf);
+}
+
+@font-face {
+    font-family: 'Planet';
+    font-style: normal;
+    src: url(../fonts/Plante.ttf);
+}
