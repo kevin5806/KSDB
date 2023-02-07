@@ -1,6 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const path = require('path');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 
