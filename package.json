@@ -1,12 +1,12 @@
 {
-  "name": "learn-sessioni-in-node",
+  "name": "kevinservdebt",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "a web app for storing debt data",
+  "main": "app.js",
   "scripts": {
-    "start": "node ./"
+    "start": "node app"
   },
-  "author": "",
+  "author": "kevin leoni",
   "license": "ISC",
   "dependencies": {
     "connect-mongo": "^4.6.0",
