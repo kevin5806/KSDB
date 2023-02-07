@@ -110,7 +110,7 @@ app.get('/', (req, res) => {
 })
 
 // route root di reindirizzamento all pagin principale
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', async (req, res) => {
 
     if (req.session.auth === true) { //verifica l'autenticazione
   
