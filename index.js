@@ -1,10 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const fs = require('fs');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
-const uaParser = require('ua-parser-js')
 
 //COSTANTI APP
 
@@ -24,14 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //serve per servire file statici accessibili da tutte le pagina del sito
-const __static =  __dirname + '/public';
+const __static =  __dirname + '/public'; 
 
 app.use(express.static(__static));
 
 // ##################### Database ###########################
 
 //url del database
-const mongoURL = 'mongodb+srv://kevin5806:giuggiola2591@kevincluster.svejfwa.mongodb.net/mongoose';
+const mongoURL = 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/KSbebt';
 
 //rimuove un errore di mongoose nella versione attuale
 mongoose.set('strictQuery', true);
