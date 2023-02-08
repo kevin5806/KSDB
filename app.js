@@ -1,6 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const path = require('path');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 
@@ -119,7 +118,7 @@ app.get('/dashboard', async (req, res) => {
   
         //error = 1 > campi di input vuoti
         //error = 2 > imput inserito nel edit non valido
-        res.render('index', {array: data, log: log, error: req.query.error, errorID: req.query.id});
+        res.render('dashboard', {array: data, log: log, error: req.query.error, errorID: req.query.id});
   
     } else { //se non autenticato
   
