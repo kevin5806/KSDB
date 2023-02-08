@@ -140,10 +140,21 @@
 
                         <article class="money-c">
 
-                            <% let n; let nStr = element.sum.toString(); let prt = nStr.split('.'); let intPrt = prt[0]; let decPrt = prt[1] || '00'; intPrt = intPrt.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); n = intPrt + ',' + decPrt; %>
+                            <%  
+                                let nStr = element.sum.toString(); 
+                                let prt = nStr.split('.'); 
+                                let intPrt = prt[0]; 
+                                let decPrt = prt[1] || '00'; 
+                                intPrt = intPrt.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); 
+                                let n = intPrt + ',' + decPrt;  
+                                if (decPrt.length == 1) { n += '0' }; 
+                            %>
+
                             <p class="count <% if (element.sum > 0) { %>green<% } else if (element.sum < 0) { %>red<% } %> "> <%= n %> </p> <p class="simbol">€</p>  
 
                         </article>
+
+                        <article></article>
                     </main>
                 </div>
             <% }); %>
