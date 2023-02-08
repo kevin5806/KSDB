@@ -13,3 +13,19 @@ main .title {
     font-family: 'Planet';
     padding: 2rem;
 }
+
+@media (width < 1000px)  {
+
+    main .title {
+        font-size: 4em;
+    }
+
+}
+
+@media (width < 600px)  {
+
+    main .title {
+        font-size: 2em;
+    }
+
+}
