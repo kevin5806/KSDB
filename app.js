@@ -41,14 +41,6 @@ mongoose.connect( mongoURL , {
 
 // MODELLI
 
-const ID = mongoose.model('id',
-    new mongoose.Schema({
-        id: {
-            type: Number
-        }
-    })
-)
-
 const LOG = mongoose.model('log',
     new mongoose.Schema({
         client: {
@@ -65,10 +57,6 @@ const LOG = mongoose.model('log',
 
 const Data = mongoose.model('data',
     new mongoose.Schema({
-        id: {
-            type: Number,
-            required: true
-        },
         name: {
             type: String,
             required: true
@@ -192,7 +180,6 @@ app.post('/data', (req, res) => {
         // controlla se i campi di input sono vuoti o che non sia stata inserita una somma numerica
         if (typeof sum == "number" && !isNaN(sum) && name != "" && (sign == 1 || sign == 2)) {
 
-
             //Esegue le operzioni del menù di selezione positivo negativo nel front end
             if (sign == 1) { //sottrai
                     
@@ -207,31 +194,19 @@ app.post('/data', (req, res) => {
 
             }
 
-            //fa in modo che l'id attuale venga aumentato di 1 sul database
-            ID.findOneAndUpdate({}, { $inc: { id: 1 }}, (err) => { 
+            //Salva i nuovi dati sul database
+            new Data({
+
+                name: name,
+                sum: sum
+
+            }).save((err) => { 
                 if (err) return res.send(500, { error: err });
+
+                //reindirizzamento alla pagina principale
+                res.redirect('/dashboard');
             })
 
-            //legge l'auttuale valore di ID sul databse
-            ID.findOne((err, ID) => {
-                if (err) return res.send(500, { error: err });
-
-                //Salva i nuovi dati sul database
-                new Data({
-
-                    id: ID.id,
-                    name: name,
-                    sum: sum
-
-                }).save((err) => { 
-                    if (err) return res.send(500, { error: err });
-
-                    //reindirizzamento alla pagina principale
-                    res.redirect('/dashboard');
-                })
-
-            })
-        
         } else {
             //se i campi di input sono vuoti
             
@@ -254,33 +229,20 @@ app.post('/dataedit', (req, res) => {
 
     if (req.session.auth === true) { //verifica l'autenticazione
 
-        let id = Number(req.body.id), sum = Number(req.body.sum), 
+        let id = req.body.id, sum = Number(req.body.sum), 
             operation = Number(req.body.operation), sBtn = Number(req.body.sBtn),
             sign = Number(req.body.sign);
 
-        if (((typeof id === "number" && !isNaN(id) && id != "") 
+        if (((typeof id === "string" && id != "") 
         && (typeof sum === "number" && !isNaN(sum) && (sum != "" || operation == 2 || sBtn == 2))) 
         && (operation == 1 || operation == 2)
         && (sBtn == 1 || sBtn == 2)
         && (sign == 1 || sign == 2)
         ) {
 
-/*             Data.findOne({}, (err, data) => {
-                if (err) return res.send(500, { error: err });
-              
-                // Modifica il valore del documento
-                document.id += 1;
-              
-                // Salva il documento modificato
-                document.save((err) => { 
-                    if (err) return res.send(500, { error: err });
-                });
-            }) */
-
-
             if (sBtn == 2) { // form inviato con il pulsante delete
 
-                Data.findOneAndRemove({ id: id }, (err) => {
+                Data.findOneAndRemove({ _id: id }, (err) => {
                     if (err) return res.send(500, { error: err });
                     // deleted
 
@@ -303,7 +265,9 @@ app.post('/dataedit', (req, res) => {
 
                 }
 
-                Data.findOne({ id: id }, (err, data) => {
+                console.log(id)
+
+                Data.findOne({ _id: id }, (err, data) => {
                     if (err) return res.send(500, { error: err });
 
                     // Modifica il valore del documento
@@ -328,6 +292,8 @@ app.post('/dataedit', (req, res) => {
             }  
 
         } else { //se inserito un input di modifica errato
+
+            console.log("sus")
 
             res.redirect('/dashboard?error=2&id=' + id);
 
