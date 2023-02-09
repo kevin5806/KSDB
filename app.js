@@ -138,7 +138,7 @@ app.post('/login', (req, res) => {
             ip: req.ip
         
         }).save((err) => {
-            if (err) return res.send(500, { error: err });
+            if (err) return res.status(500).send({ error: err });
 
             //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
             res.redirect('/dashboard');
@@ -158,13 +158,9 @@ app.get('/logout', (req, res) => {
     req.session.auth = false;
 
     req.session.destroy((err) => {
+        if (err) return res.status(500).send({ error: err });
 
-        if (err) {
-            res.send("Server error");
-        } else {
-            res.redirect('/dashboard');
-        }
-
+        res.redirect('/dashboard');
     })
 
 })
@@ -201,7 +197,7 @@ app.post('/data', (req, res) => {
                 sum: sum
 
             }).save((err) => { 
-                if (err) return res.send(500, { error: err });
+                if (err) return res.status(500).send({ error: err });
 
                 //reindirizzamento alla pagina principale
                 res.redirect('/dashboard');
@@ -243,7 +239,7 @@ app.post('/dataedit', (req, res) => {
             if (sBtn == 2) { // form inviato con il pulsante delete
 
                 Data.findOneAndRemove({ _id: id }, (err) => {
-                    if (err) return res.send(500, { error: err });
+                    if (err) return res.status(500).send({ error: err });
                     // deleted
 
                     //ritorna alla dashboard
@@ -266,7 +262,7 @@ app.post('/dataedit', (req, res) => {
                 }
 
                 Data.findOne({ _id: id }, (err, data) => {
-                    if (err) return res.send(500, { error: err });
+                    if (err) return res.status(500).send({ error: err });
 
                     // Modifica il valore del documento
                     if (operation === 1) { //add operation
@@ -281,7 +277,7 @@ app.post('/dataedit', (req, res) => {
                     
                     // Salva il documento modificato
                     data.save((err) => { 
-                        if (err) return res.send(500, { error: err });
+                        if (err) return res.status(500).send({ error: err });
 
                         //ritorna alla dashboard
                         res.redirect('/dashboard');
@@ -290,8 +286,6 @@ app.post('/dataedit', (req, res) => {
             }  
 
         } else { //se inserito un input di modifica errato
-
-            console.log("sus")
 
             res.redirect('/dashboard?error=2&id=' + id);
 
