@@ -265,8 +265,6 @@ app.post('/dataedit', (req, res) => {
 
                 }
 
-                console.log(id)
-
                 Data.findOne({ _id: id }, (err, data) => {
                     if (err) return res.send(500, { error: err });
 
