@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
+const uuid = require('uuid');
 const dotenv = require('dotenv'); dotenv.config();
 
 //COSTANTI APP
@@ -73,7 +74,7 @@ const User = mongoose.model('user',
         password: { type: String},
         name: { type: String},
         surname: { type: String},
-        codeID: { type: String},
+        inviteCodeID: { type: String},
         ban: { type: Boolean }
 
     })
@@ -120,7 +121,9 @@ app.get('/', (req, res) => {
 })
 
 // route root di reindirizzamento all pagin principale
-app.get('/dashboard/:code', async (req, res) => {
+app.get('/dashboard', async (req, res) => {
+
+    console.log(req.params.code);
 
     if (req.session.auth === true) { //verifica l'autenticazione
   
@@ -129,28 +132,40 @@ app.get('/dashboard/:code', async (req, res) => {
   
         //error = 1 > campi di input vuoti
         //error = 2 > imput inserito nel edit non valido
-        res.render('dashboard', {array: data, log: log, error: req.query.error, errorID: req.query.id});
+        res.render('dashboard', {array: data, log: log, newInviteCode: req.query.newCode, error: req.query.error, errorID: req.query.id});
   
-    } else { //se non autenticato
-  
+    } else { 
+
+        //se non autenticato
         res.redirect('/login');
   
     }
 })
 
-app.get('/code', (req, res) => {
+app.get('/invite/generate', (req, res) => {
     
-    new Invitecode ({
+    if (req.session.auth === true) { //verifica l'autenticazione
 
-        creatorID: "Test",
-        valid: true
+        let code = uuid.v4();
 
-    }).save((err) => {
-        if (err) return res.status(500).send({ error: err });
+        new Invitecode ({
 
-        res.redirect("/register");
-    })
+            code: code,
+            creatorID: req.session.userID,
+            valid: true
 
+        }).save((err) => {
+            if (err) return res.status(500).send({ error: err });
+            
+            res.redirect(`/dashboard?newCode='${code}`);
+        })
+
+    } else {
+        
+        //se non autenticato
+        res.redirect('/login');
+
+    }
 })
 
 app.get('/register', (req, res) => {
@@ -185,7 +200,7 @@ app.post('/register', (req, res) => {
     } else { 
         
         // Verifica che il codice esista e che non sia già stato usato
-        Invitecode.findOne({ _id: code }, (err, codeData) => {
+        Invitecode.findOne({ code: code }, (err, codeData) => {
             
             // Se il codice di invito non esiste passa un errore
             if (!(codeData)) return res.redirect('/register?error=2');
@@ -206,7 +221,7 @@ app.post('/register', (req, res) => {
                 // Salvataggio dei dati sul database
                 new User ({
 
-                    codeID: codeData._id,
+                    inviteCodeID: codeData._id,
                     name: name,
                     surname: surname,
                     user: user,
@@ -353,8 +368,8 @@ app.post('/data', (req, res) => {
         }
         
     } else {
-        //se l'user non è autenticato
-        
+
+        //se non autenticato
         res.redirect('/login');
         
     }
@@ -435,8 +450,9 @@ app.post('/dataedit', (req, res) => {
 
         }
     
-    } else { //se non autenticato
+    } else {
 
+        //se non autenticato
         res.redirect('/login');
 
     }
