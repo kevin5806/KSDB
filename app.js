@@ -123,8 +123,6 @@ app.get('/', (req, res) => {
 // route root di reindirizzamento all pagin principale
 app.get('/dashboard', async (req, res) => {
 
-    console.log(req.params.code);
-
     if (req.session.auth === true) { //verifica l'autenticazione
   
         const data = await Data.find({userID: req.session.userID}).exec();
@@ -460,5 +458,5 @@ app.post('/dataedit', (req, res) => {
 
 //avvio del server
 app.listen(PORT, () => {
-    console.log(`server sulla porta ${PORT}`);
+    console.log(`server aperto sulla porta ${PORT}`);
 })
