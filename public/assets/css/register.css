@@ -1,0 +1,7 @@
+@import url(main.css);
+@import url(auth.css);
+
+article form span {
+    display: flex;
+    column-gap: 5px;
+}

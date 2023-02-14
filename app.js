@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
+const uuid = require('uuid');
+const dotenv = require('dotenv'); dotenv.config();
 
 //COSTANTI APP
 
@@ -10,6 +12,12 @@ const app = express();
 
 //parametri del server
 const PORT = process.env.PORT || 3000;
+
+//url del database
+const mongoURL = process.env.DB_URL;
+
+//chiave di criptazione per la generazione sessioni
+const sessionKEY = process.env.SESSION_KEY;
 
 // ######### Impostazioni AppExpress ##############
 
@@ -27,9 +35,6 @@ app.use(express.static(__static));
 
 // ##################### Database ###########################
 
-//url del database
-const mongoURL = 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/KSbebt';
-
 //rimuove un errore di mongoose nella versione attuale
 mongoose.set('strictQuery', true);
 
@@ -43,28 +48,44 @@ mongoose.connect( mongoURL , {
 
 const LOG = mongoose.model('log',
     new mongoose.Schema({
-        client: {
-            type: String
-        },
-        date: {
-            type: String
-        },
-        ip: {
-            type: String
-        }
+
+        userID: { type: String },
+        client: { type: String },
+        date: { type: String },
+        ip: { type: String }
+
     })
 )
 
 const Data = mongoose.model('data',
     new mongoose.Schema({
-        name: {
-            type: String,
-            required: true
-        },
-        sum: {
-            type: Number,
-            required: true
-        },
+
+        userID: { type: String },
+        name: { type: String },
+        sum: { type: Number }
+
+    })
+)
+
+const User = mongoose.model('user',
+    new mongoose.Schema({
+
+        user: { type: String},
+        password: { type: String},
+        name: { type: String},
+        surname: { type: String},
+        inviteCodeID: { type: String},
+        ban: { type: Boolean }
+
+    })
+)
+
+const Invitecode = mongoose.model('invitecode',
+    new mongoose.Schema({
+
+        creatorID: { type: String },
+        valid: { type: Boolean }       
+
     })
 )
 
@@ -74,10 +95,13 @@ const Data = mongoose.model('data',
 app.use(session({
     store: MongoStore.create({
         mongoUrl: mongoURL,
-        touchAfter: 24 * 3600 *1 // indica il tempo massimo senza un utilizzo della sessione (in s)
-    }),
 
-    secret: '?Es(H+KbPeShVmYq', //chiave di criptazione per le sessioni
+        // indica il tempo massimo senza un utilizzo della sessione (in s)
+        touchAfter: 24 * 3600 *1 
+    }),
+    
+    //chiave di criptazione per le sessioni
+    secret: sessionKEY, 
     
     resave: false,
     saveUninitialized: false,
@@ -101,55 +125,178 @@ app.get('/dashboard', async (req, res) => {
 
     if (req.session.auth === true) { //verifica l'autenticazione
   
-        const data = await Data.find().exec();
-        const log = await LOG.find().exec();
+        const data = await Data.find({userID: req.session.userID}).exec();
+        const log = await LOG.find({userID: req.session.userID}).exec();
   
         //error = 1 > campi di input vuoti
         //error = 2 > imput inserito nel edit non valido
-        res.render('dashboard', {array: data, log: log, error: req.query.error, errorID: req.query.id});
+        res.render('dashboard', {array: data, log: log, newInviteCode: req.query.newCode, error: req.query.error, errorID: req.query.id});
   
-    } else { //se non autenticato
-  
+    } else { 
+
+        //se non autenticato
         res.redirect('/login');
   
     }
-}) 
+})
+
+app.get('/invite/generate', (req, res) => {
+    
+    if (req.session.auth === true) { //verifica l'autenticazione
+
+        let code = uuid.v4();
+
+        new Invitecode ({
+
+            code: code,
+            creatorID: req.session.userID,
+            valid: true
+
+        }).save((err) => {
+            if (err) return res.status(500).send({ error: err });
+            
+            res.redirect(`/dashboard?newCode='${code}`);
+        })
+
+    } else {
+        
+        //se non autenticato
+        res.redirect('/login');
+
+    }
+})
+
+app.get('/register', (req, res) => {
+    
+    //error = 1 > Input inserito non valido
+    //error = 2 > Codice di invito non presente sul database
+    //error = 3 > Codice di invito già usato
+    //error = 4> User gia in uso
+    res.render('register', {error: req.query.error});
+
+})
+
+app.post('/register', (req, res) => {
+
+    let user = req.body.user, 
+        password = req.body.password, 
+        name = req.body.name, 
+        surname = req.body.surname, 
+        code = req.body.code;
+       
+    // Verifica della validità degli input
+    if (!code || !user || !password || !name || !surname
+        || typeof code !== "string"
+        || typeof user !== "string"
+        || typeof password !== "string"
+        || typeof name !== "string"
+        || typeof surname !== "string"
+    ) {
+
+        return res.redirect('/register?error=1');
+
+    } else { 
+        
+        // Verifica che il codice esista e che non sia già stato usato
+        Invitecode.findOne({ code: code }, (err, codeData) => {
+            
+            // Se il codice di invito non esiste passa un errore
+            if (!(codeData)) return res.redirect('/register?error=2');
+            
+            //verifica degli errori !!(non spostare sopra al erorre precedente e causa un conflitto)!!
+            if (err) return res.status(500).send({ error: err });
+
+            // Se "valid" è falso passa un errore
+            if (!(codeData.valid)) return res.redirect('/register?error=3');
+
+            
+            // Verifica della presenza del user sul database
+            User.findOne({ user: user }, (err, userData) => {
+                if (err) return res.status(500).send({ error: err2 });
+            
+                if (userData) return res.redirect('/register?error=4');
+              
+                // Salvataggio dei dati sul database
+                new User ({
+
+                    inviteCodeID: codeData._id,
+                    name: name,
+                    surname: surname,
+                    user: user,
+                    password: password,
+                    ban: false
+
+                }).save((err) => {
+                    if (err) return res.status(500).send({ error: err });
+
+                    // Se la registrazione è stata salvata correttamente, salva l'invito come usato
+                    codeData.valid = false;
+
+                    // Salva il documento modificato
+                    codeData.save((err) => { 
+                        if (err) return res.status(500).send({ error: err });
+
+                        // Ritorno al login
+                        res.redirect('/login');
+                    })
+                })
+            })
+        })
+    }
+})
+
 
 // route di redirect all pagina di login
 app.get('/login', (req, res) => {
 
-    //error = 1 > password/utente errati
+    //error = 1 > input inserito non valido
+    //error = 2 > password/utente errati
     res.render('login', {error: req.query.error} );
 
 })
 
 app.post('/login', (req, res) => {
 
-    //verifica se nome utente e password inviati dal front sono corretti
-    if (req.body.user === "u" && req.body.pass === "p") {
-        
-        req.session.auth = true;
-        req.session.ip = req.ip; // salva nei dati della sessione l'indirizzo IP del host
-        
-        new LOG({
+    let user = req.body.user,  
+        password = req.body.password;
 
-            client: req.headers['user-agent'],
-            date: new Date(),
-            ip: req.ip
-        
-        }).save((err) => {
-            if (err) return res.status(500).send({ error: err });
+    if (
+        !user || !password
+        ||  typeof user !== "string"
+        ||  typeof password !== "string"
+    ) {
 
-            //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
-            res.redirect('/dashboard');
-        })
-
-    
-    } else {
-        
-        //reinderizza passando un errore
         res.redirect('/login?error=1');
 
+    } else {
+
+        User.findOne({ user: user, password: password }, (err, userData) => {
+            if (err) return res.status(500).send({ error: err });
+            
+            //se non viene trovato nessun documento reinderizza con errore (utente o password errati)
+            if (!userData) return res.redirect('/login?error=2');
+
+            //atentica l'utente e quindi verifica la sessione
+            req.session.auth = true;
+
+            //salva l'id del utente nella sessione
+            req.session.userID = userData._id;
+            
+            new LOG({
+
+                userID: userData._id,
+                client: req.headers['user-agent'],
+                date: new Date(),
+                ip: req.ip
+            
+            }).save((err) => {
+                if (err) return res.status(500).send({ error: err });
+
+                //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
+                res.redirect('/dashboard');
+            })
+
+        })
     }
 })
 
@@ -171,10 +318,16 @@ app.post('/data', (req, res) => {
     //verifica l'autenticazione
     if (req.session.auth === true) {
 
-        let sum = Number(req.body.sum), name = req.body.name, sign = Number(req.body.sign);  
-        
+        let sum = Number(req.body.sum), 
+            name = req.body.name, 
+            sign = Number(req.body.sign);
+
         // controlla se i campi di input sono vuoti o che non sia stata inserita una somma numerica
-        if (typeof sum == "number" && !isNaN(sum) && name != "" && (sign == 1 || sign == 2)) {
+        if (
+                typeof sum == "number" && !isNaN(sum) 
+            &&  typeof name == "string" && name != "" 
+            &&  (sign == 1 || sign == 2)
+        ) {
 
             //Esegue le operzioni del menù di selezione positivo negativo nel front end
             if (sign == 1) { //sottrai
@@ -193,6 +346,7 @@ app.post('/data', (req, res) => {
             //Salva i nuovi dati sul database
             new Data({
 
+                userID: req.session.userID,
                 name: name,
                 sum: sum
 
@@ -212,8 +366,8 @@ app.post('/data', (req, res) => {
         }
         
     } else {
-        //se l'user non è autenticato
-        
+
+        //se non autenticato
         res.redirect('/login');
         
     }
@@ -225,15 +379,18 @@ app.post('/dataedit', (req, res) => {
 
     if (req.session.auth === true) { //verifica l'autenticazione
 
-        let id = req.body.id, sum = Number(req.body.sum), 
-            operation = Number(req.body.operation), sBtn = Number(req.body.sBtn),
+        let id = req.body.id, 
+            sum = Number(req.body.sum), 
+            operation = Number(req.body.operation), 
+            sBtn = Number(req.body.sBtn),
             sign = Number(req.body.sign);
 
-        if (((typeof id === "string" && id != "") 
-        && (typeof sum === "number" && !isNaN(sum) && (sum != "" || operation == 2 || sBtn == 2))) 
-        && (operation == 1 || operation == 2)
-        && (sBtn == 1 || sBtn == 2)
-        && (sign == 1 || sign == 2)
+        if (
+               ((typeof id === "string" && id != "") 
+            && (typeof sum === "number" && !isNaN(sum) && (sum != "" || operation == 2 || sBtn == 2))) 
+            && (operation == 1 || operation == 2)
+            && (sBtn == 1 || sBtn == 2)
+            && (sign == 1 || sign == 2)
         ) {
 
             if (sBtn == 2) { // form inviato con il pulsante delete
@@ -261,7 +418,7 @@ app.post('/dataedit', (req, res) => {
 
                 }
 
-                Data.findOne({ _id: id }, (err, data) => {
+                Data.findOne({userID: req.session.userID, _id: id }, (err, data) => {
                     if (err) return res.status(500).send({ error: err });
 
                     // Modifica il valore del documento
@@ -291,8 +448,9 @@ app.post('/dataedit', (req, res) => {
 
         }
     
-    } else { //se non autenticato
+    } else {
 
+        //se non autenticato
         res.redirect('/login');
 
     }
@@ -300,5 +458,5 @@ app.post('/dataedit', (req, res) => {
 
 //avvio del server
 app.listen(PORT, () => {
-    console.log(`server sulla porta ${PORT}`);
-});
+    console.log(`server aperto sulla porta ${PORT}`);
+})

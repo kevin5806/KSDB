@@ -9,9 +9,26 @@ main {
 main .title {
     display: flex;
     font-size: 7em;
-
     font-family: 'Planet';
     padding: 2rem;
+    margin-top: 5rem;
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2em;
+    font-size: 1.2em;
+    margin: 8rem 2rem 0 2rem;
+    padding: 10px;
+    border: solid #808080;;
+    border-radius: 1rem;
+    background-color: rgba(238, 238, 238, 0.35);
+}
+
+article p {
+    color: rgb(92, 94, 102);
+    max-width: 80rem;
 }
 
 @media (width < 1000px)  {

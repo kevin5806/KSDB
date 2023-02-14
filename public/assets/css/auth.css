@@ -1,0 +1,81 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+nav {
+    z-index: 1;
+}
+
+body {
+    background-color: #f0f2f5;
+    color: #1c1e21;
+}
+
+main {
+    height: 100%;
+    width: 100%;
+}
+
+
+@media (width > 500px)  {
+    main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+article {
+    flex: 0 0 60%;
+    text-align: center;
+    padding: 60px 30px 60px 30px;
+}
+
+article form {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+}
+
+article form input, article form .btn-login {
+    width: 100%;
+    margin: 5px 0;
+    height: 45px;
+    vertical-align: middle;
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+article form input {
+    border: 1px solid #dddfe2;
+    color: #1d2129;
+    padding: 0 8px;
+    outline: none;
+    transition: 150ms;
+}
+
+article form input:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px #e7f3ff;
+}
+
+article p {
+    font-size: 14px;
+}
+
+article p a {
+    text-decoration: none;
+    color: #1c1e21;
+    font-weight: 600;
+}
+
+.error-c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+}
