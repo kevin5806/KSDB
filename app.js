@@ -83,6 +83,7 @@ const User = mongoose.model('user',
 const Invitecode = mongoose.model('invitecode',
     new mongoose.Schema({
 
+        code: { type: String },
         creatorID: { type: String },
         valid: { type: Boolean }       
 
