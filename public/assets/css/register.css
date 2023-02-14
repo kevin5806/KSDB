@@ -75,6 +75,11 @@ article p a {
     font-weight: 600;
 }
 
+article form span {
+    display: flex;
+    column-gap: 5px;
+}
+
 .error-c {
     display: flex;
     justify-content: center;

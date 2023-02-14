@@ -15,6 +15,7 @@
             <ul>
                 <li><a href="/"><img class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
                 <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
             </ul>
         </nav>
     </header>
@@ -24,15 +25,15 @@
             <article class="flex-c">
                 <form action="/login" method="post">
                     <input name="user" type="text" placeholder="Username">
-                    <input name="pass" type="password" placeholder="Password">
+                    <input name="password" type="password" placeholder="Password">
 
-                    <% if (error == 1) { %> <div class="error-c"> <p class="error"> User o Password errati </p> </div> <% } %>
+                    <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
+                    <% if (error == 2) { %> <div class="error-c"> <p class="error"> Wrong User or Password </p> </div> <% } %>
 
                     <button type="submit" class="btn-login btn-s1 btn">Login</button>
                 </form>
             </article>
     </main>
 
-    <script src="/assets/js/login.js"></script>
 </body>
 </html>
