@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
-const uuid = require('uuid');
+const dotenv = require('dotenv'); dotenv.config();
 
 //COSTANTI APP
 
@@ -11,6 +11,12 @@ const app = express();
 
 //parametri del server
 const PORT = process.env.PORT || 3000;
+
+//url del database
+const mongoURL = process.env.DB_URL;
+
+//chiave di criptazione per la generazione sessioni
+const sessionKEY = process.env.SESSION_KEY;
 
 // ######### Impostazioni AppExpress ##############
 
@@ -27,9 +33,6 @@ const __static =  __dirname + '/public';
 app.use(express.static(__static));
 
 // ##################### Database ###########################
-
-//url del database
-const mongoURL = 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/KSbebt';
 
 //rimuove un errore di mongoose nella versione attuale
 mongoose.set('strictQuery', true);
@@ -80,7 +83,6 @@ const Invitecode = mongoose.model('invitecode',
     new mongoose.Schema({
 
         creatorID: { type: String },
-        code: { type: String },
         valid: { type: Boolean }       
 
     })
@@ -92,10 +94,13 @@ const Invitecode = mongoose.model('invitecode',
 app.use(session({
     store: MongoStore.create({
         mongoUrl: mongoURL,
-        touchAfter: 24 * 3600 *1 // indica il tempo massimo senza un utilizzo della sessione (in s)
-    }),
 
-    secret: '?Es(H+KbPeShVmYq', //chiave di criptazione per le sessioni
+        // indica il tempo massimo senza un utilizzo della sessione (in s)
+        touchAfter: 24 * 3600 *1 
+    }),
+    
+    //chiave di criptazione per le sessioni
+    secret: sessionKEY, 
     
     resave: false,
     saveUninitialized: false,
@@ -115,7 +120,7 @@ app.get('/', (req, res) => {
 })
 
 // route root di reindirizzamento all pagin principale
-app.get('/dashboard', async (req, res) => {
+app.get('/dashboard/:code', async (req, res) => {
 
     if (req.session.auth === true) { //verifica l'autenticazione
   
@@ -138,12 +143,13 @@ app.get('/code', (req, res) => {
     new Invitecode ({
 
         creatorID: "Test",
-        code: uuid.v4(),
-        valid: "true"
+        valid: true
 
-    }).save()
+    }).save((err) => {
+        if (err) return res.status(500).send({ error: err });
 
-    res.redirect("/register");
+        res.redirect("/register");
+    })
 
 })
 
@@ -179,15 +185,18 @@ app.post('/register', (req, res) => {
     } else { 
         
         // Verifica che il codice esista e che non sia già stato usato
-        Invitecode.findOne({ code: code }, (err, codeData) => {
-            if (err) return res.status(500).send({ error: err });
-
+        Invitecode.findOne({ _id: code }, (err, codeData) => {
+            
             // Se il codice di invito non esiste passa un errore
             if (!(codeData)) return res.redirect('/register?error=2');
+            
+            //verifica degli errori !!(non spostare sopra al erorre precedente e causa un conflitto)!!
+            if (err) return res.status(500).send({ error: err });
 
             // Se "valid" è falso passa un errore
-            if (!(codeData.valid)) return res.redirect('/register?error=3'); 
-          
+            if (!(codeData.valid)) return res.redirect('/register?error=3');
+
+            
             // Verifica della presenza del user sul database
             User.findOne({ user: user }, (err, userData) => {
                 if (err) return res.status(500).send({ error: err2 });
@@ -398,8 +407,6 @@ app.post('/dataedit', (req, res) => {
 
                 Data.findOne({userID: req.session.userID, _id: id }, (err, data) => {
                     if (err) return res.status(500).send({ error: err });
-
-                    if (!data) return res.redirect('/dashboard?error=2&id=' + id);
 
                     // Modifica il valore del documento
                     if (operation === 1) { //add operation
