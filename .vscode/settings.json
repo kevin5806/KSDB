@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/1092aa4a-b596-425f-86b0-3b51c1e02970/AppServices/subscriptions/1092aa4a-b596-425f-86b0-3b51c1e02970/resourceGroups/ksdb/providers/Microsoft.Web/sites/ksdb",
-    "appService.deploySubpath": "."
-}
