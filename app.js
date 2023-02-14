@@ -179,14 +179,14 @@ app.post('/register', (req, res) => {
     } else { 
         
         // Verifica che il codice esista e che non sia già stato usato
-        Invitecode.find({ code: code }, (err, codeData) => {
+        Invitecode.findOne({ code: code }, (err, codeData) => {
             if (err) return res.status(500).send({ error: err });
 
             // Se il codice di invito non esiste passa un errore
-            if (!codeData) return res.redirect('/register?error=2');
+            if (!(codeData)) return res.redirect('/register?error=2');
 
             // Se "valid" è falso passa un errore
-            if (!codeData.valid) return res.redirect('/register?error=3'); 
+            if (!(codeData.valid)) return res.redirect('/register?error=3'); 
           
             // Verifica della presenza del user sul database
             User.findOne({ user: user }, (err, userData) => {
