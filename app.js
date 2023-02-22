@@ -156,7 +156,7 @@ app.get('/invite/generate', (req, res) => {
         }).save((err) => {
             if (err) return res.status(500).send({ error: err });
             
-            res.redirect(`/dashboard?newCode='${code}`);
+            res.redirect(`/dashboard?newCode=${code}`);
         })
 
     } else {
