@@ -131,7 +131,14 @@ app.get('/dashboard', async (req, res) => {
   
         //error = 1 > campi di input vuoti
         //error = 2 > imput inserito nel edit non valido
-        res.render('dashboard', {array: data, log: log, newInviteCode: req.query.newCode, error: req.query.error, errorID: req.query.id});
+        res.render('dashboard', {
+            array: data, 
+            log: log, 
+            InviteCode: req.query.InviteCode, 
+            url: `${req.protocol}://${req.get('host')}${req.url}`, 
+            error: req.query.error, 
+            errorID: req.query.id
+        })
   
     } else { 
 
@@ -143,7 +150,8 @@ app.get('/dashboard', async (req, res) => {
 
 app.get('/invite/generate', (req, res) => {
     
-    if (req.session.auth === true) { //verifica l'autenticazione
+    //verifica l'autenticazione
+    if (req.session.auth === true) {
 
         let code = uuid.v4();
 
@@ -156,7 +164,7 @@ app.get('/invite/generate', (req, res) => {
         }).save((err) => {
             if (err) return res.status(500).send({ error: err });
             
-            res.redirect(`/dashboard?newCode=${code}`);
+            res.redirect(`/dashboard?InviteCode=${code}`);
         })
 
     } else {
@@ -173,7 +181,7 @@ app.get('/register', (req, res) => {
     //error = 2 > Codice di invito non presente sul database
     //error = 3 > Codice di invito già usato
     //error = 4> User gia in uso
-    res.render('register', {error: req.query.error});
+    res.render('register', {error: req.query.error, InviteCode: req.query.InviteCode});
 
 })
 
