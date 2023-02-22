@@ -51,8 +51,30 @@
         <div>
             <h4>Menu</h4>
             <div class="content">
+                <a class="flex-c btn btn-s1" href="/invite/generate">Invite</a>
                 <button id="log-btn-o" class="flex-c btn btn-s2" >Log</button>
                 <a class="flex-c btn btn-s2" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="inviteCode" class="invite-code <% if (!(InviteCode)) { %> none <% } %>">
+        <div>
+            <header>
+                <h4>Invite</h4>
+                <button id="inviteCodeBTNc" class="transparent-c-btn btn"><span class="p-e-none"><img style="rotate: 45deg;" height="12px" width="12px" src="/assets/svg/plus-icon.svg"></span></button>
+            </header>
+            <div class="content">
+                <span>
+                    <label for="inviteCodeIN">Code</label>
+                    <input value="<%= InviteCode %>" placeholder="code here" id="inviteCodeIN" type="text" readonly>
+                    <button id="inviteCodeCopyBTN" class="transparent-c-btn flex-c btn"> <span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy-icon.svg"></span></button>
+                </span>
+                <span>
+                    <label for="inviteLinkIN">Link</label>
+                    <input value="<%= url.replace("dashboard", "register"); %>" placeholder="link here" id="inviteLinkIN" type="text" readonly>
+                    <button id="inviteLinkCopyBTN" class="transparent-c-btn flex-c btn"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy-icon.svg"></span></button>
+                </span>
             </div>
         </div>
     </div>
@@ -61,7 +83,7 @@
         <div>
             <header>
                 <h3>Log</h3>
-                <button role="button" id="log-btn-c" class="btn-s2 btn btn-add "><span class="p-e-none"><img style="rotate: 45deg;" height="10px" width="10px" src="/assets/svg/plus-icon.svg"></span></button>
+                <button id="log-btn-c" class="btn-s2 btn btn-add "><span class="p-e-none"><img style="rotate: 45deg;" height="10px" width="10px" src="/assets/svg/plus-icon.svg"></span></button>
             </header>
 
             <main>

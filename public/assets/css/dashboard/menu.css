@@ -15,16 +15,12 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.15);
 }
 
-.content {
+.menu .content {
     display: grid;
     row-gap: 10px;
     padding-top: 1rem;
     height: 100%;
     width: 100%;
-}
-
-.menu .content > a:hover, .menu .content > a:focus {
-    background-color: #f6f6f8;
 }
 
 @media (width < 500px)  {
@@ -100,4 +96,76 @@
 
 .log-menu > div main article .sub {
     font-weight: var(--fw-medium);
+}
+
+/* Invite code */
+
+.invite-code {
+    display: flex;
+    justify-content: right;
+}
+
+.invite-code > div {
+    position: fixed;
+    z-index: 2;
+    top: 6rem;
+    margin:  0 1.2rem 0 1.2rem;
+    background-color: white; 
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 12px 48px rgba(0,0,0,.15);
+}
+
+.invite-code header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.invite-code .content {
+    display: grid;
+    row-gap: 10px;
+    padding-top: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.invite-code .content span {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    column-gap: 10px;
+}
+
+@media (width < 500px)  {
+
+    .invite-code {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+}
+
+.invite-code label {
+    font-weight: bold;  
+}
+
+.invite-code input {
+    position: relative;
+    border-radius: 6px;
+    width: 10rem;
+    height: 1.7rem;
+    background-color: white;
+    border: 1px solid #dddfe2;
+    color: #1d2129;
+    padding: 0 8px;
+    outline: none;
+    font-size: 15px;
+    transition: 150ms;
+}
+
+.invite-code input:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px #e7f3ff;
 }

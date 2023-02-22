@@ -74,6 +74,30 @@ document.querySelectorAll('#addDataBtn').forEach(button => {
     });
 });
 
+document.querySelectorAll('#inviteCodeCopyBTN').forEach(button => {
+    button.addEventListener('click', event => {
+
+        navigator.clipboard.writeText(document.getElementById('inviteCodeIN').value);
+  
+    });
+});
+
+document.querySelectorAll('#inviteLinkCopyBTN').forEach(button => {
+    button.addEventListener('click', event => {
+
+        navigator.clipboard.writeText(document.getElementById('inviteLinkIN').value);
+  
+    });
+});
+
+document.querySelectorAll('#inviteCodeBTNc').forEach(button => {
+    button.addEventListener('click', event => {
+
+        document.getElementById('inviteCode').classList.add('none')
+  
+    });
+});
+
 /* document.querySelector('#sumAddIN').addEventListener('input', function(e) {
     this.value = this.value.slice(0,6);
   }); */
