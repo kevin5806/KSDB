@@ -135,11 +135,10 @@ app.get('/dashboard', (req, res) => {
         User.findById(req.session.userID, async (err, userData) => {
             if (err) return res.status(500).send({ error: err });
 
-            //se l'utente è bannato viene reindirizzato al login con l'errore di ban
-            if (userData.ban) return res.redirect('/login?error=3');
+            //se l'utente è bannato viene reindirizzato al logout
+            if (userData.ban) return res.redirect('/logout');  
 
             //se l'utente non è bannato l'eseguzione del programma continua
-
             const data = await Data.find({userID: req.session.userID}).exec();
             const log = await LOG.find({userID: req.session.userID}).exec();
             
@@ -335,8 +334,6 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-
-    req.session.auth = false;
 
     req.session.destroy((err) => {
         if (err) return res.status(500).send({ error: err });
