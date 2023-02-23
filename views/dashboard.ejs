@@ -54,6 +54,16 @@
                 <a class="flex-c btn btn-s1" href="/invite/generate">Invite</a>
                 <button id="log-btn-o" class="flex-c btn btn-s2" >Log</button>
                 <a class="flex-c btn btn-s2" href="/logout">Logout</a>
+                
+                <form method="post" action="/account/delete">
+
+                    <label for="deletePW">BETA</label>
+                    <input id="deletePW" class="in-s1" placeholder="Delete password" type="password" name="password">
+
+                    <% if (error == 3) { %> <p class="error flex-c">Wrong Password</p> <% } %>
+
+                    <button class="btn btn-s1" type="submit">Delete Account</button>
+                </form>
             </div>
         </div>
     </div>

@@ -146,7 +146,8 @@ app.get('/dashboard', (req, res) => {
             // RENDERIZZAZIONE CON DATI
 
             //error = 1 > campi di input vuoti
-            //error = 2 > imput inserito nel edit non valido
+            //error = 2 > input inserito nel edit non valido
+            //error = 3 > input inserito nel delete account sbagliato
 
             res.render('dashboard', {
                 array: data, 
@@ -273,6 +274,53 @@ app.post('/register', (req, res) => {
     }
 })
 
+app.post('/account/delete', (req, res) => {
+
+    let password = req.body.password,
+        sessionID = req.session.userID;
+    
+    //se l'utente non è autenticato reindirizza al login
+    if (req.session.auth !== true) return res.redirect('/login');
+
+    //input inserito non valido
+    if (!password || typeof password !== "string") return res.redirect('/dashboard?error=3'); //da finire
+
+    //account password metch
+    User.findById(sessionID, (err, userData) => {
+        if (err) return res.status(500).send({ error: err });
+
+        bcrypt.compare(password, userData.password, (err, result) => {
+            /* if (err) return res.status(500).send({ error: err }); */
+
+            //se le password non combaciano reinderizza con errore
+            if (!(result)) return res.redirect('/dashboard?error=3'); /* da finire */
+
+            //DELETE
+
+            //account data
+            Data.deleteMany({userID: sessionID}, (err) => {
+                /* if (err) return res.status(500).send({ error: err }); */
+
+            //account log
+            LOG.deleteMany({userID: sessionID}, (err) => {
+                /* if (err) return res.status(500).send({ error: err }); */
+
+            //inviti non ancora usati creati da questo account e l'invito con il quale si è registrato
+            Invitecode.deleteMany({$or: [ { creatorID: sessionID, valid: true }, { _id: userData.inviteCodeID } ] }, (err) => {
+                /* if (err) return res.status(500).send({ error: err }); */
+            
+            //account user
+            User.findByIdAndRemove(sessionID, (err) => {
+                /* if (err) return res.status(500).send({ error: err }); */
+
+                //se tutto è andato a buon fine reinderizza al logout
+                res.redirect('/logout');
+
+            }); }); }); });
+
+        })
+    })
+})
 
 // route di redirect all pagina di login
 app.get('/login', (req, res) => {
