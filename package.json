@@ -9,6 +9,7 @@
   "author": "kevin leoni",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "connect-mongo": "^4.6.0",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
