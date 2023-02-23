@@ -296,7 +296,9 @@ app.post('/login', (req, res) => {
                 userID: userData._id,
                 client: req.headers['user-agent'],
                 date: new Date(),
-                ip: req.ip
+                
+                // modificabile dal utente (dati incerti), funziona solo con Azure
+                ip: req.headers['x-client-ip']
             
             }).save((err) => {
                 if (err) return res.status(500).send({ error: err });
@@ -404,7 +406,7 @@ app.post('/dataedit', (req, res) => {
 
             if (sBtn == 2) { // form inviato con il pulsante delete
 
-                Data.findOneAndRemove({ _id: id }, (err) => {
+                Data.findOneAndRemove({userID: req.session.userID, _id: id }, (err) => {
                     if (err) return res.status(500).send({ error: err });
                     // deleted
 
