@@ -126,30 +126,45 @@ app.get('/', (req, res) => {
 })
 
 // route root di reindirizzamento all pagin principale
-app.get('/dashboard', async (req, res) => {
+app.get('/dashboard', (req, res) => {
 
-    if (req.session.auth === true) { //verifica l'autenticazione
-  
-        const data = await Data.find({userID: req.session.userID}).exec();
-        const log = await LOG.find({userID: req.session.userID}).exec();
+    //verifica l'autenticazione del utente
+    if (req.session.auth === true) { 
         
-        //error = 1 > campi di input vuoti
-        //error = 2 > imput inserito nel edit non valido
-        res.render('dashboard', {
-            array: data, 
-            log: log, 
-            InviteCode: req.query.InviteCode, 
-            url: `${req.protocol}://${req.get('host')}`, 
-            error: req.query.error, 
-            errorID: req.query.id
+        //verifica del ban
+        User.findById(req.session.userID, async (err, userData) => {
+            if (err) return res.status(500).send({ error: err });
+
+            //se l'utente è bannato viene reindirizzato al login con l'errore di ban
+            if (userData.ban) return res.redirect('/login?error=3');
+
+            //se l'utente non è bannato l'eseguzione del programma continua
+
+            const data = await Data.find({userID: req.session.userID}).exec();
+            const log = await LOG.find({userID: req.session.userID}).exec();
+            
+            // RENDERIZZAZIONE CON DATI
+
+            //error = 1 > campi di input vuoti
+            //error = 2 > imput inserito nel edit non valido
+
+            res.render('dashboard', {
+                array: data, 
+                log: log, 
+                InviteCode: req.query.InviteCode, 
+                url: `${req.protocol}://${req.get('host')}`, 
+                error: req.query.error, 
+                errorID: req.query.id
+            })
         })
-  
+
     } else { 
 
         //se non autenticato
         res.redirect('/login');
   
     }
+    
 })
 
 app.get('/invite/generate', (req, res) => {
@@ -264,6 +279,7 @@ app.get('/login', (req, res) => {
 
     //error = 1 > input inserito non valido
     //error = 2 > password/utente errati
+    //error = 3 > user bannato
     res.render('login', {error: req.query.error} );
 
 })
@@ -288,6 +304,9 @@ app.post('/login', (req, res) => {
             
             //se non viene trovato nessun documento reinderizza con errore (utente o password errati)
             if (!userData) return res.redirect('/login?error=2');
+
+            //se l'utente è bannato viene restituito un errore
+            if (userData.ban) return res.redirect('/login?error=3');
 
             //atentica l'utente e quindi verifica la sessione
             req.session.auth = true;
