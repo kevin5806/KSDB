@@ -5,6 +5,7 @@ const MongoStore = require('connect-mongo');
 const uuid = require('uuid');
 const dotenv = require('dotenv'); dotenv.config();
 const helmet = require('helmet');
+const bcrypt = require('bcrypt');
 
 //COSTANTI APP
 
@@ -238,11 +239,11 @@ app.post('/register', (req, res) => {
 
             
             // Verifica della presenza del user sul database
-            User.findOne({ user: user }, (err, userData) => {
+            User.findOne({ user: user }, async (err, userData) => {
                 if (err) return res.status(500).send({ error: err2 });
             
                 if (userData) return res.redirect('/register?error=4');
-              
+
                 // Salvataggio dei dati sul database
                 new User ({
 
@@ -250,7 +251,7 @@ app.post('/register', (req, res) => {
                     name: name,
                     surname: surname,
                     user: user,
-                    password: password,
+                    password: await bcrypt.hash(password, 5),
                     ban: false
 
                 }).save((err) => {
@@ -298,35 +299,43 @@ app.post('/login', (req, res) => {
 
     } else {
 
-        User.findOne({ user: user, password: password }, (err, userData) => {
-            if (err) return res.status(500).send({ error: err });
-            
+        User.findOne({ user: user }, (err, userData) => {
             //se non viene trovato nessun documento reinderizza con errore (utente o password errati)
             if (!userData) return res.redirect('/login?error=2');
 
-            //se l'utente è bannato viene restituito un errore
-            if (userData.ban) return res.redirect('/login?error=3');
-
-            //atentica l'utente e quindi verifica la sessione
-            req.session.auth = true;
-
-            //salva l'id del utente nella sessione
-            req.session.userID = userData._id;
+            if (err) return res.status(500).send({ error: err });
             
-            new LOG({
-
-                userID: userData._id,
-                client: req.headers['user-agent'],
-                date: new Date(),
-                
-                // modificabile dal utente (dati incerti), funziona solo con Azure
-                ip: req.headers['x-client-ip']
-            
-            }).save((err) => {
+            // compara la password cryptata di quel utente con la password inserita
+            bcrypt.compare(password, userData.password, (err, result) => {
                 if (err) return res.status(500).send({ error: err });
 
-                //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
-                res.redirect('/dashboard');
+                //se le password non combaciano reinderizza con errore (utente o password errati)
+                if (!(result)) return res.redirect('/login?error=2');
+            
+                //se l'utente è bannato viene restituito un errore
+                if (userData.ban) return res.redirect('/login?error=3');
+
+                //atentica l'utente e quindi verifica la sessione
+                req.session.auth = true;
+
+                //salva l'id del utente nella sessione
+                req.session.userID = userData._id;
+                
+                new LOG({
+
+                    userID: userData._id,
+                    client: req.headers['user-agent'],
+                    date: new Date(),
+                    
+                    // modificabile dal utente (dati incerti), funziona solo con Azure
+                    ip: req.headers['x-client-ip']
+                
+                }).save((err) => {
+                    if (err) return res.status(500).send({ error: err });
+
+                    //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
+                    res.redirect('/dashboard');
+                })
             })
 
         })
