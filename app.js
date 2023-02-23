@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 const uuid = require('uuid');
 const dotenv = require('dotenv'); dotenv.config();
+const helmet = require('helmet');
 
 //COSTANTI APP
 
@@ -27,6 +28,9 @@ app.set('view engine', 'ejs');
 // utilizzo delle librerie express
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//per la sicurezza e la protezzione da vari tipi di attachi del app
+app.use(helmet());
 
 //serve per servire file statici accessibili da tutte le pagina del sito
 const __static =  __dirname + '/public'; 
@@ -128,14 +132,14 @@ app.get('/dashboard', async (req, res) => {
   
         const data = await Data.find({userID: req.session.userID}).exec();
         const log = await LOG.find({userID: req.session.userID}).exec();
-  
+        
         //error = 1 > campi di input vuoti
         //error = 2 > imput inserito nel edit non valido
         res.render('dashboard', {
             array: data, 
             log: log, 
             InviteCode: req.query.InviteCode, 
-            url: `${req.protocol}://${req.get('host')}${req.url}`, 
+            url: `${req.protocol}://${req.get('host')}`, 
             error: req.query.error, 
             errorID: req.query.id
         })
