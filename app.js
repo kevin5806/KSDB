@@ -117,8 +117,7 @@ app.use(session({
     }
 }))
 
-// ################################################
-
+// ################## Route #######################
 
 app.get('/', (req, res) => {
 
@@ -126,70 +125,72 @@ app.get('/', (req, res) => {
 
 })
 
-// route root di reindirizzamento all pagin principale
-app.get('/dashboard', (req, res) => {
+//ottimizzata
+app.get('/dashboard', async (req, res) => {
+    try {
 
-    //verifica l'autenticazione del utente
-    if (req.session.auth === true) { 
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login');
         
+        const sessionUID = req.session.userID;
+
         //verifica del ban
-        User.findById(req.session.userID, async (err, userData) => {
-            if (err) return res.status(500).send({ error: err });
-
-            //se l'utente è bannato viene reindirizzato al logout
-            if (userData.ban) return res.redirect('/logout');  
-
-            //se l'utente non è bannato l'eseguzione del programma continua
-            const data = await Data.find({userID: req.session.userID}).exec();
-            const log = await LOG.find({userID: req.session.userID}).exec();
+        const userData = await User.findById(sessionUID);
             
-            // RENDERIZZAZIONE CON DATI
+        //se l'utente è bannato viene reindirizzato al logout
+        if (userData.ban) return res.redirect('/logout');  
 
-            //error = 1 > campi di input vuoti
-            //error = 2 > imput inserito nel edit non valido
+        // Lettura dati dal database
+        const data = await Data.find({userID: sessionUID}).exec();
+        const log = await LOG.find({userID: sessionUID}).exec();
+        /* const inviteCC = await Invitecode.find({creatorID: sessionUID}).exec(); //inviteCC == inviteCodeCreated */
+        
+            
+        // RENDERIZZAZIONE CON DATI
+        //error = 1 > campi di input vuoti
+        //error = 2 > input inserito nel edit non valido
+        //error = 3 > input inserito nel delete account sbagliato
 
-            res.render('dashboard', {
-                array: data, 
-                log: log, 
-                InviteCode: req.query.InviteCode, 
-                url: `${req.protocol}://${req.get('host')}`, 
-                error: req.query.error, 
-                errorID: req.query.id
-            })
+        res.render('dashboard', {
+            data: data, 
+            log: log,
+            /* inviteCC: inviteCC, */
+            InviteCode: req.query.InviteCode, 
+            url: `${req.protocol}://${req.get('host')}`, 
+            error: req.query.error, 
+            errorID: req.query.id
         })
 
-    } else { 
+    } catch (err) {
 
-        //se non autenticato
-        res.redirect('/login');
-  
+        if (err) return res.status(500).send({err});
+
     }
-    
 })
 
-app.get('/invite/generate', (req, res) => {
-    
-    //verifica l'autenticazione
-    if (req.session.auth === true) {
+app.get('/invite/generate', async (req, res) => {
+    try {
 
-        let code = uuid.v4();
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login');
 
-        new Invitecode ({
+        const code = uuid.v4();
+
+        // Salva sul database il nuovo invito
+        await new Invitecode ({
 
             code: code,
             creatorID: req.session.userID,
             valid: true
 
-        }).save((err) => {
-            if (err) return res.status(500).send({ error: err });
-            
-            res.redirect(`/dashboard?InviteCode=${code}`);
-        })
+        }).save();
 
-    } else {
-        
-        //se non autenticato
-        res.redirect('/login');
+        // Reindirizza passando il nuovo codice
+        res.redirect(`/dashboard?InviteCode=${code}`);
+
+    } catch (err) {
+
+        res.status(500).send({err});
 
     }
 })
@@ -204,77 +205,113 @@ app.get('/register', (req, res) => {
 
 })
 
-app.post('/register', (req, res) => {
+//ottimizzata
+app.post('/register', async (req, res) => {
+    try {
 
-    let user = req.body.user, 
-        password = req.body.password, 
-        name = req.body.name, 
-        surname = req.body.surname, 
-        code = req.body.code;
+        // Estrae i dati dalla richiesta
+        const user = req.body.user; 
+        const password = req.body.password; 
+        const name = req.body.name; 
+        const surname = req.body.surname; 
+        const code = req.body.code;
        
-    // Verifica della validità degli input
-    if (!code || !user || !password || !name || !surname
-        || typeof code !== "string"
-        || typeof user !== "string"
-        || typeof password !== "string"
-        || typeof name !== "string"
-        || typeof surname !== "string"
-    ) {
+        // Verifica della validità degli input
+        if (!code || !user || !password || !name || !surname
 
-        return res.redirect('/register?error=1');
+            || typeof code !== "string"
+            || typeof user !== "string"
+            || typeof password !== "string"
+            || typeof name !== "string"
+            || typeof surname !== "string"
 
-    } else { 
+        ) return res.redirect('/register?error=1');
+
         
         // Verifica che il codice esista e che non sia già stato usato
-        Invitecode.findOne({ code: code }, (err, codeData) => {
-            
-            // Se il codice di invito non esiste passa un errore
-            if (!(codeData)) return res.redirect('/register?error=2');
-            
-            //verifica degli errori !!(non spostare sopra al erorre precedente e causa un conflitto)!!
-            if (err) return res.status(500).send({ error: err });
+        const codeData = await Invitecode.findOne({ code: code });
 
-            // Se "valid" è falso passa un errore
-            if (!(codeData.valid)) return res.redirect('/register?error=3');
+        // Se il codice di invito non esiste restituisce un errore
+        if (!codeData) return res.redirect('/register?error=2');
+        
+        // Se "valid" è falso restituisce un errore
+        if (!codeData.valid) return res.redirect('/register?error=3');
+        
+        // Verifica della presenza del user sul database
+        const userData = await User.findOne({ user: user });
 
-            
-            // Verifica della presenza del user sul database
-            User.findOne({ user: user }, async (err, userData) => {
-                if (err) return res.status(500).send({ error: err2 });
-            
-                if (userData) return res.redirect('/register?error=4');
+        // Se l'user esiste già restituisce un errore
+        if (userData) return res.redirect('/register?error=4');
 
-                // Salvataggio dei dati sul database
-                new User ({
+        // Hashing della password
+        const hashPw = await bcrypt.hash(password, 5);
 
-                    inviteCodeID: codeData._id,
-                    name: name,
-                    surname: surname,
-                    user: user,
-                    password: await bcrypt.hash(password, 5),
-                    ban: false
+        // Savataggio del user sul database
+        await new User({
+            inviteCodeID: codeData._id,
+            name: name,
+            surname: surname,
+            user: user,
+            password: hashPw,
+            ban: false
+        }).save();
+        
+        // Se la registrazione è stata salvata correttamente, salva l'invito come usato
+        codeData.valid = false;
+        await codeData.save();
+        
+        // Ritorno al login
+        res.redirect('/login');
 
-                }).save((err) => {
-                    if (err) return res.status(500).send({ error: err });
+    } catch (err) {
 
-                    // Se la registrazione è stata salvata correttamente, salva l'invito come usato
-                    codeData.valid = false;
+        res.status(500).send({err});
 
-                    // Salva il documento modificato
-                    codeData.save((err) => { 
-                        if (err) return res.status(500).send({ error: err });
+    }
+})
 
-                        // Ritorno al login
-                        res.redirect('/login');
-                    })
-                })
-            })
-        })
+//ottimizzata
+app.post('/account/delete', async (req, res) => {
+    try {
+
+        // Estrae i dati dalla richiesta
+        const password = req.body.password;
+        const sessionUID = req.session.userID;
+    
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login');
+    
+        // Verifica l'input inserito
+        if (typeof password !== "string") return res.redirect('/dashboard?error=3');
+
+        // Lettura dei dati utente dal database
+        const userData = await User.findById(sessionUID);
+
+        // Controllo password inserita e password del account
+        const result = await bcrypt.compare(password, userData.password) //non togliere mai await
+
+        // Se le password non cobaciano restituisce un errore
+        if (!result) return res.redirect('/dashboard?error=3');
+
+        // Elimina i dati dell'account in parallelo
+        await Promise.all([
+            Data.deleteMany({ userID: sessionUID }),
+            LOG.deleteMany({ userID: sessionUID }),
+            Invitecode.deleteMany({ $or: [{ creatorID: sessionUID, valid: true }, { _id: userData.inviteCodeID }] }),
+            User.findByIdAndRemove(sessionUID),
+        ])
+
+        // Reindirizza al logout
+        res.redirect('/logout');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
     }
 })
 
 
-// route di redirect all pagina di login
 app.get('/login', (req, res) => {
 
     //error = 1 > input inserito non valido
@@ -284,219 +321,214 @@ app.get('/login', (req, res) => {
 
 })
 
-app.post('/login', (req, res) => {
+//ottimizzata
+app.post('/login', async (req, res) => {
+    try {
 
-    let user = req.body.user,  
-        password = req.body.password;
+        // Estrae i dati dalla richiesta
+        const user = req.body.user;  
+        const password = req.body.password;
 
-    if (
-        !user || !password
-        ||  typeof user !== "string"
-        ||  typeof password !== "string"
-    ) {
-
-        res.redirect('/login?error=1');
-
-    } else {
-
-        User.findOne({ user: user }, (err, userData) => {
-            //se non viene trovato nessun documento reinderizza con errore (utente o password errati)
-            if (!userData) return res.redirect('/login?error=2');
-
-            if (err) return res.status(500).send({ error: err });
+        // Verifica degli input inseriti
+        if (
             
-            // compara la password cryptata di quel utente con la password inserita
-            bcrypt.compare(password, userData.password, (err, result) => {
-                if (err) return res.status(500).send({ error: err });
+            !user || !password
+            || typeof user !== "string"
+            || typeof password !== "string"
 
-                //se le password non combaciano reinderizza con errore (utente o password errati)
-                if (!(result)) return res.redirect('/login?error=2');
-            
-                //se l'utente è bannato viene restituito un errore
-                if (userData.ban) return res.redirect('/login?error=3');
+        ) return res.redirect('/login?error=1');
+        
+        // Cerca l'user sul databse
+        const userData = await User.findOne({ user: user });
+        
+        // Se il nome utente inserito non esiste restituisce un errore
+        if (!userData) return res.redirect('/login?error=2');
+        
+        // Controllo password inserita e password del account
+        const result = await bcrypt.compare(password, userData.password); //non togliere mai await
 
-                //atentica l'utente e quindi verifica la sessione
-                req.session.auth = true;
+        // Se le password non cobaciano restituisce un errore
+        if (!result) return res.redirect('/login?error=2');
+        
+        // Se l'utente è bannato restituisce un errore
+        if (userData.ban) return res.redirect('/login?error=3');
+        
+        // Creazione della sessione con i relativi dati
+        req.session.auth = true;
+        req.session.userID = userData._id;
+        
+        // Salvataggio dei LOG riguardo il login
+        await new LOG({
+            userID: userData._id,
+            client: req.headers['user-agent'],
+            date: new Date(),
+            ip: req.headers['x-client-ip']
+        }).save();
 
-                //salva l'id del utente nella sessione
-                req.session.userID = userData._id;
-                
-                new LOG({
+        // Reinderizzamento all Dashboard
+        res.redirect('/dashboard');
 
-                    userID: userData._id,
-                    client: req.headers['user-agent'],
-                    date: new Date(),
-                    
-                    // modificabile dal utente (dati incerti), funziona solo con Azure
-                    ip: req.headers['x-client-ip']
-                
-                }).save((err) => {
-                    if (err) return res.status(500).send({ error: err });
+    } catch (err) {
 
-                    //reinderizzamento alla pagina principale dove avverrà nuovamente il controllo sul autenticazione
-                    res.redirect('/dashboard');
-                })
-            })
+        res.status(500).send({err});
 
-        })
     }
 })
 
-app.get('/logout', (req, res) => {
+//ottimizzata
+app.get('/logout', async (req, res) => {
+    try {
 
-    req.session.destroy((err) => {
-        if (err) return res.status(500).send({ error: err });
+        // Distrugge la ssessione
+        await req.session.destroy();
 
-        res.redirect('/dashboard');
-    })
+        // Reinderizza al login
+        res.redirect('/login');
 
+    } catch (err) {
+
+        res.status(500).send({err});
+
+    }
 })
 
-// route per l'aggiunta di nuovi dati
-app.post('/data', (req, res) => {
+//ottimizzata
+app.post('/data', async (req, res) => {
+    try {
 
-    //verifica l'autenticazione
-    if (req.session.auth === true) {
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login');
 
-        let sum = Number(req.body.sum), 
-            name = req.body.name, 
-            sign = Number(req.body.sign);
+        // Estrae i dati dalla richiesta
+        let sum = Number(req.body.sum);
+        const name = req.body.name;
+        const sign = Number(req.body.sign);
 
-        // controlla se i campi di input sono vuoti o che non sia stata inserita una somma numerica
+        // Verifica la validità dei dati inseriti
         if (
-                typeof sum == "number" && !isNaN(sum) 
-            &&  typeof name == "string" && name != "" 
-            &&  (sign == 1 || sign == 2)
-        ) {
 
-            //Esegue le operzioni del menù di selezione positivo negativo nel front end
-            if (sign == 1) { //sottrai
-                    
-                //rende il numero negativo
+            isNaN(sum) ||
+            typeof name !== 'string' ||
+            name === '' ||
+            (sign !== 1 && sign !== 2)
+
+        ) return res.redirect('/dashboard?error=1');
+
+        // Esegue le operazioni del menù di selezione positivo/negativo
+        if (sign === 1) {
+
+            // Negativo
+            sum = Math.abs(sum);
+            sum = sum * -1;
+
+        } else {
+
+            // Positivo
+            sum = Math.abs(sum);  
+
+        }
+
+        // Salva i nuovi dati sul database
+        await new Data({
+
+            userID: req.session.userID,
+            sum: sum,
+            name: name
+
+        }).save();
+
+        // Reindirizza alla pagina principale
+        res.redirect('/dashboard');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
+    }
+})
+
+//ottimizzata
+app.post('/dataedit', async (req, res) => {
+    try {
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login');
+
+        // Estrae i dati dalla richiesta
+        const id = req.body.id;
+        let sum = Number(req.body.sum);
+        const operation = Number(req.body.operation);
+        const sBtn = Number(req.body.sBtn);
+        const sign = Number(req.body.sign);
+
+        // Verifica la validità dei dati inseriti
+        if (
+
+            id === '' 
+            || typeof id !== 'string' 
+            || isNaN(sum) 
+            || (sum === '' && operation !== 2 && sBtn !== 2) 
+            || !(operation === 1 || operation === 2) 
+            || !(sBtn === 1 || sBtn === 2) 
+            || !(sign === 1 || sign === 2)
+
+        ) return res.redirect(`/dashboard?error=2&id=${id}`);
+        
+        const data = await Data.findOne({userID: req.session.userID, _id: id });
+
+        if (sBtn == 1) {
+            // inviato con il pulsante normale
+            
+            if (sign === 1) {
+
+                // Negativo
                 sum = Math.abs(sum);
                 sum = sum * -1;
 
-            } else if (sign == 2) { // somma
-                
-                //rende il numero positivo
-                sum = Math.abs(sum);
+            } else {
+
+                // Positivo
+                sum = Math.abs(sum);  
 
             }
 
-            //Salva i nuovi dati sul database
-            new Data({
+            if (operation === 1) {
 
-                userID: req.session.userID,
-                name: name,
-                sum: sum
+                // Operazione ADD
+                data.sum += sum;
 
-            }).save((err) => { 
-                if (err) return res.status(500).send({ error: err });
+            } else {
 
-                //reindirizzamento alla pagina principale
-                res.redirect('/dashboard');
-            })
+                // Operazione SET
+                data.sum = sum;
 
-        } else {
-            //se i campi di input sono vuoti
+            }
             
-            //reinderizza passando un errore
-            res.redirect('/dashboard?error=1');
+            // Salva il documento modificato
+            await data.save();
+
+        } else if (sBtn == 2) {
+            // inviato con il pulsante delete
+
+            // Elimina il dato dal database
+            await data.remove();
 
         }
-        
-    } else {
 
-        //se non autenticato
-        res.redirect('/login');
-        
+        // Ritorna alla dashboard
+        res.redirect('/dashboard');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
     }
 })
 
-
-// route per la modifica dei dati gia presenti
-app.post('/dataedit', (req, res) => {
-
-    if (req.session.auth === true) { //verifica l'autenticazione
-
-        let id = req.body.id, 
-            sum = Number(req.body.sum), 
-            operation = Number(req.body.operation), 
-            sBtn = Number(req.body.sBtn),
-            sign = Number(req.body.sign);
-
-        if (
-               ((typeof id === "string" && id != "") 
-            && (typeof sum === "number" && !isNaN(sum) && (sum != "" || operation == 2 || sBtn == 2))) 
-            && (operation == 1 || operation == 2)
-            && (sBtn == 1 || sBtn == 2)
-            && (sign == 1 || sign == 2)
-        ) {
-
-            if (sBtn == 2) { // form inviato con il pulsante delete
-
-                Data.findOneAndRemove({userID: req.session.userID, _id: id }, (err) => {
-                    if (err) return res.status(500).send({ error: err });
-                    // deleted
-
-                    //ritorna alla dashboard
-                    res.redirect('/dashboard');
-                })
-
-            } else if (sBtn == 1) { // form inviato con il pulsante normale
-                
-                if (sign == 1) { //sottrai
-                    
-                    //rende il numero negativo
-                    sum = Math.abs(sum);
-                    sum = sum * -1;
-
-                } else if (sign == 2) { // somma
-                    
-                    //rende il numero positivo
-                    sum = Math.abs(sum);
-
-                }
-
-                Data.findOne({userID: req.session.userID, _id: id }, (err, data) => {
-                    if (err) return res.status(500).send({ error: err });
-
-                    // Modifica il valore del documento
-                    if (operation === 1) { //add operation
-
-                        data.sum += sum;
-
-                    } else if (operation === 2) { //set operation
-
-                        data.sum = sum;
-
-                    }
-                    
-                    // Salva il documento modificato
-                    data.save((err) => { 
-                        if (err) return res.status(500).send({ error: err });
-
-                        //ritorna alla dashboard
-                        res.redirect('/dashboard');
-                    })
-                })
-            }  
-
-        } else { //se inserito un input di modifica errato
-
-            res.redirect('/dashboard?error=2&id=' + id);
-
-        }
-    
-    } else {
-
-        //se non autenticato
-        res.redirect('/login');
-
-    }
-})
+// ############## Avvio Server ####################
 
 //avvio del server
 app.listen(PORT, () => {
     console.log(`server aperto sulla porta ${PORT}`);
 })
+
+// ################################################

@@ -18,7 +18,14 @@
 .menu .content {
     display: grid;
     row-gap: 10px;
-    padding-top: 1rem;
+    padding:  1rem 0 .5rem 0;
+    height: 100%;
+    width: 100%;
+}
+
+.menu .content form {
+    display: grid;
+    padding:  1rem 0 .5rem 0;
     height: 100%;
     width: 100%;
 }
