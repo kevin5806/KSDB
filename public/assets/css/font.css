@@ -17,3 +17,9 @@
     font-style: normal;
     src: url(../fonts/Plante.ttf);
 }
+
+@font-face {
+    font-family: 'TiltNeon';
+    font-style: normal;
+    src: url(../fonts/TiltNeon.ttf);
+}

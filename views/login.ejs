@@ -13,15 +13,15 @@
     <header>
         <nav>
             <ul>
-                <li><a href="/"><img class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
+                <li><a draggable="false" href="/"><img draggable="false" class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
+                <li><a draggable="false" href="/login">Login</a></li>
+                <li><a draggable="false" href="/register">Register</a></li>
             </ul>
         </nav>
     </header>
     
     
-    <main id="main" class="m-keyboard">
+    <main id="main">
             <article class="flex-c">
                 <form action="/login" method="post">
                     <input name="user" type="text" placeholder="Username">
@@ -30,6 +30,7 @@
                     <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
                     <% if (error == 2) { %> <div class="error-c"> <p class="error"> Wrong User or Password </p> </div> <% } %>
                     <% if (error == 3) { %> <div class="error-c"> <p class="error"> Banned User </p> </div> <% } %>
+                    <% if (error == 4) { %> <div class="error-c"> <p class="error"> Login First </p> </div> <% } %>
 
                     <button type="submit" class="btn-login btn-s1 btn">Login</button>
                 </form>

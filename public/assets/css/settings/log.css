@@ -1,0 +1,45 @@
+.log div {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding: 12px;
+    border-top: solid rgba(178, 178, 178, 0.6) 2px;
+    width: 59.2rem;
+}
+
+.log div a {
+    column-gap: 3px;
+}
+
+.log main {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    
+    height: 36rem;
+    row-gap: 10px;
+
+    padding: 1rem 1rem 1rem 1rem;
+    overflow-y: scroll;
+}
+
+.log main article {
+    display: flex;
+    flex-direction: column;
+    
+    row-gap: 10px;
+    
+    background-color: rgb(246, 246, 248);
+    padding: 10px;
+    border-radius: 8px;
+    line-height: 20px;
+}
+
+.log main article span {
+    display: flex;
+    column-gap: 10px;
+}
+
+.log main article .sub {
+    font-weight: var(--fw-medium);
+}

@@ -117,6 +117,24 @@ app.use(session({
     }
 }))
 
+// ################# Appunti ######################
+/*
+
+    // in caso servissero anche i dati del utente
+
+        //verifica del ban
+        const userData = await User.findById(sessionUID);
+            
+        //se l'utente è bannato viene reindirizzato al logout
+        if (userData.ban) return res.redirect('/logout');
+
+    // in caso si dovesse verificare solo il ban
+
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
+
+
+*/
 // ################## Route #######################
 
 app.get('/', (req, res) => {
@@ -125,24 +143,21 @@ app.get('/', (req, res) => {
 
 })
 
+
 //ottimizzata
 app.get('/dashboard', async (req, res) => {
     try {
 
         // Verifica l'autenticazione
-        if (!req.session.auth) return res.redirect('/login');
+        if (!req.session.auth) return res.redirect('/login?error=4');
         
         const sessionUID = req.session.userID;
 
-        //verifica del ban
-        const userData = await User.findById(sessionUID);
-            
         //se l'utente è bannato viene reindirizzato al logout
-        if (userData.ban) return res.redirect('/logout');  
+        if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
 
         // Lettura dati dal database
         const data = await Data.find({userID: sessionUID}).exec();
-        const log = await LOG.find({userID: sessionUID}).exec();
         /* const inviteCC = await Invitecode.find({creatorID: sessionUID}).exec(); //inviteCC == inviteCodeCreated */
         
             
@@ -152,8 +167,7 @@ app.get('/dashboard', async (req, res) => {
         //error = 3 > input inserito nel delete account sbagliato
 
         res.render('dashboard', {
-            data: data, 
-            log: log,
+            data: data,
             /* inviteCC: inviteCC, */
             InviteCode: req.query.InviteCode, 
             url: `${req.protocol}://${req.get('host')}`, 
@@ -168,11 +182,127 @@ app.get('/dashboard', async (req, res) => {
     }
 })
 
+
+app.get('/settings', async (req, res) => {
+    try {
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+            
+        //verifica del ban e salvataggio dati utente
+        const userData = await User.findById(sessionUID);
+    
+        //se l'utente è bannato viene reindirizzato al logout
+        if (userData.ban) return res.redirect('/logout');
+
+        // Download dati dal database
+        const logData = await LOG.find({userID: sessionUID}).exec();
+
+        res.render('settings', {logData: logData});
+
+    } catch (err) {
+
+        if (err) return res.status(500).send({err});
+
+    }
+})
+
+
+app.get('/login', (req, res) => {
+
+    //error = 1 > input inserito non valido
+    //error = 2 > password/utente errati
+    //error = 3 > user bannato
+    //error = 4 > errore in caso si provi ad accedere ad una pagina senza essere loggati (login first)
+    res.render('login', {error: req.query.error} );
+
+})
+
+
+//ottimizzata
+app.post('/login', async (req, res) => {
+    try {
+
+        // Estrae i dati dalla richiesta
+        const user = req.body.user;  
+        const password = req.body.password;
+
+        // Verifica degli input inseriti
+        if (
+            
+            !user || !password
+            || typeof user !== "string"
+            || typeof password !== "string"
+
+        ) return res.redirect('/login?error=1');
+        
+        // Cerca l'user sul databse
+        const userData = await User.findOne({ user: user });
+        
+        // Se il nome utente inserito non esiste restituisce un errore
+        if (!userData) return res.redirect('/login?error=2');
+        
+        // Controllo password inserita e password del account
+        const result = await bcrypt.compare(password, userData.password); //non togliere mai await
+
+        // Se le password non cobaciano restituisce un errore
+        if (!result) return res.redirect('/login?error=2');
+        
+        // Se l'utente è bannato restituisce un errore
+        if (userData.ban) return res.redirect('/login?error=3');
+        
+        // Creazione della sessione con i relativi dati
+        req.session.auth = true;
+        req.session.userID = userData._id;
+        
+        // Salvataggio dei LOG riguardo il login
+        await new LOG({
+            userID: userData._id,
+            client: req.headers['user-agent'],
+            date: new Date(),
+            ip: req.headers['x-client-ip']
+        }).save();
+
+        // Reinderizzamento all Dashboard
+        res.redirect('/dashboard');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
+    }
+})
+
+
+//ottimizzata
+app.get('/logout', async (req, res) => {
+    try {
+
+        // Distrugge la ssessione
+        await req.session.destroy();
+
+        // Reinderizza al login
+        res.redirect('/login');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
+    }
+})
+
+
 app.get('/invite/generate', async (req, res) => {
     try {
 
         // Verifica l'autenticazione
-        if (!req.session.auth) return res.redirect('/login');
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
 
         const code = uuid.v4();
 
@@ -180,7 +310,7 @@ app.get('/invite/generate', async (req, res) => {
         await new Invitecode ({
 
             code: code,
-            creatorID: req.session.userID,
+            creatorID: sessionUID,
             valid: true
 
         }).save();
@@ -195,6 +325,7 @@ app.get('/invite/generate', async (req, res) => {
     }
 })
 
+
 app.get('/register', (req, res) => {
     
     //error = 1 > Input inserito non valido
@@ -204,6 +335,7 @@ app.get('/register', (req, res) => {
     res.render('register', {error: req.query.error, InviteCode: req.query.InviteCode});
 
 })
+
 
 //ottimizzata
 app.post('/register', async (req, res) => {
@@ -270,22 +402,27 @@ app.post('/register', async (req, res) => {
     }
 })
 
+
 //ottimizzata
-app.post('/account/delete', async (req, res) => {
+app.post('/delete/account', async (req, res) => {
     try {
+        
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+
+        //verifica del ban
+        const userData = await User.findById(sessionUID);
+        
+        //se l'utente è bannato viene reindirizzato al logout
+        if (userData.ban) return res.redirect('/logout');
 
         // Estrae i dati dalla richiesta
         const password = req.body.password;
-        const sessionUID = req.session.userID;
-    
-        // Verifica l'autenticazione
-        if (!req.session.auth) return res.redirect('/login');
-    
+        
         // Verifica l'input inserito
         if (typeof password !== "string") return res.redirect('/dashboard?error=3');
-
-        // Lettura dei dati utente dal database
-        const userData = await User.findById(sessionUID);
 
         // Controllo password inserita e password del account
         const result = await bcrypt.compare(password, userData.password) //non togliere mai await
@@ -298,7 +435,7 @@ app.post('/account/delete', async (req, res) => {
             Data.deleteMany({ userID: sessionUID }),
             LOG.deleteMany({ userID: sessionUID }),
             Invitecode.deleteMany({ $or: [{ creatorID: sessionUID, valid: true }, { _id: userData.inviteCodeID }] }),
-            User.findByIdAndRemove(sessionUID),
+            User.findByIdAndRemove(sessionUID)
         ])
 
         // Reindirizza al logout
@@ -311,93 +448,43 @@ app.post('/account/delete', async (req, res) => {
     }
 })
 
-
-app.get('/login', (req, res) => {
-
-    //error = 1 > input inserito non valido
-    //error = 2 > password/utente errati
-    //error = 3 > user bannato
-    res.render('login', {error: req.query.error} );
-
-})
-
-//ottimizzata
-app.post('/login', async (req, res) => {
+app.get('/delete/log', async (req, res) => {
+    
     try {
 
-        // Estrae i dati dalla richiesta
-        const user = req.body.user;  
-        const password = req.body.password;
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login?error=4');
 
-        // Verifica degli input inseriti
-        if (
-            
-            !user || !password
-            || typeof user !== "string"
-            || typeof password !== "string"
+        const sessionUID = req.session.userID;
 
-        ) return res.redirect('/login?error=1');
-        
-        // Cerca l'user sul databse
-        const userData = await User.findOne({ user: user });
-        
-        // Se il nome utente inserito non esiste restituisce un errore
-        if (!userData) return res.redirect('/login?error=2');
-        
-        // Controllo password inserita e password del account
-        const result = await bcrypt.compare(password, userData.password); //non togliere mai await
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: req.session.userID, ban: true}) ) return res.redirect('/logout');
 
-        // Se le password non cobaciano restituisce un errore
-        if (!result) return res.redirect('/login?error=2');
-        
-        // Se l'utente è bannato restituisce un errore
-        if (userData.ban) return res.redirect('/login?error=3');
-        
-        // Creazione della sessione con i relativi dati
-        req.session.auth = true;
-        req.session.userID = userData._id;
-        
-        // Salvataggio dei LOG riguardo il login
-        await new LOG({
-            userID: userData._id,
-            client: req.headers['user-agent'],
-            date: new Date(),
-            ip: req.headers['x-client-ip']
-        }).save();
+        //eliminazione log
+        await LOG.deleteMany({ userID: sessionUID });
 
-        // Reinderizzamento all Dashboard
-        res.redirect('/dashboard');
+        res.redirect('/settings');
 
     } catch (err) {
 
         res.status(500).send({err});
 
     }
+
 })
 
-//ottimizzata
-app.get('/logout', async (req, res) => {
-    try {
-
-        // Distrugge la ssessione
-        await req.session.destroy();
-
-        // Reinderizza al login
-        res.redirect('/login');
-
-    } catch (err) {
-
-        res.status(500).send({err});
-
-    }
-})
 
 //ottimizzata
 app.post('/data', async (req, res) => {
     try {
 
         // Verifica l'autenticazione
-        if (!req.session.auth) return res.redirect('/login');
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
 
         // Estrae i dati dalla richiesta
         let sum = Number(req.body.sum);
@@ -431,7 +518,7 @@ app.post('/data', async (req, res) => {
         // Salva i nuovi dati sul database
         await new Data({
 
-            userID: req.session.userID,
+            userID: sessionUID,
             sum: sum,
             name: name
 
@@ -450,8 +537,14 @@ app.post('/data', async (req, res) => {
 //ottimizzata
 app.post('/dataedit', async (req, res) => {
     try {
+
         // Verifica l'autenticazione
-        if (!req.session.auth) return res.redirect('/login');
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
 
         // Estrae i dati dalla richiesta
         const id = req.body.id;
@@ -473,7 +566,7 @@ app.post('/dataedit', async (req, res) => {
 
         ) return res.redirect(`/dashboard?error=2&id=${id}`);
         
-        const data = await Data.findOne({userID: req.session.userID, _id: id });
+        const data = await Data.findOne({userID: sessionUID, _id: id });
 
         if (sBtn == 1) {
             // inviato con il pulsante normale
