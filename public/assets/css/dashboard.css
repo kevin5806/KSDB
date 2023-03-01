@@ -85,14 +85,6 @@ nav {
     justify-content: right;
 }
 
-.red {
-    color: red;
-}
-
-.green {
-    color: rgb(39, 201, 69);
-}
-
 .money-c {
     display: flex;
     font-family: var(--ff-secondary);

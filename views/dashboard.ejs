@@ -17,7 +17,7 @@
             <li><a draggable="false" href="/dashboard">Dashboard</a></li>
         </ul>
         <div class="popup-btn">
-            <button role="button" id="addDataBtn" value="0" class="btn-s2 btn btn-add "><span class="p-e-none"><img height="10px" width="10px" src="/assets/svg/plus-icon.svg"></span></button>
+            <button role="button" id="addDataBtn" value="0" class="btn-s2 btn btn-add "><span class="p-e-none"><img height="10px" width="10px" src="/assets/svg/plus.svg"></span></button>
             <button id="menuBtn" value="0" class="btn-s1 btn">Menu</button>
         </div>
     </nav>
@@ -46,15 +46,13 @@
     </div>
 </div>
 
-
 <div id="menu" class="menu none">
     <div>
         <h4>Menu</h4>
         <div class="content">
-            <a draggable="false" class="flex-c btn btn-s1" href="/settings">Settings</a>
-            <a draggable="false" class="flex-c btn btn-s1" href="/invite/generate">Invite</a>
-            <button id="log-btn-o" class="flex-c btn btn-s2" >Log</button>
-            <a draggable="false" class="flex-c btn btn-s2" href="/logout">Logout</a>
+            <a id="settings-btn" draggable="false" class="flex-c btn btn-s1" href="/settings"><img height="20px" width="20px" src="/assets/svg/white-settings.svg">Settings</a>
+            <a draggable="false" class="flex-c btn btn-s2" href="/generate/invite"><img height="20px" width="20px" src="/assets/svg/invite.svg">Invite</a>
+            <a draggable="false" class="flex-c btn btn-s2" href="/logout"><img height="20px" width="20px" src="/assets/svg/logout.svg">Logout</a>
             
             <form method="post" action="/delete/account">
 
@@ -73,18 +71,18 @@
     <div>
         <header>
             <h4>Invite</h4>
-            <button id="inviteCodeBTNc" class="transparent-c-btn btn"><span class="p-e-none"><img style="rotate: 45deg;" height="12px" width="12px" src="/assets/svg/plus-icon.svg"></span></button>
+            <button id="inviteCodeBTNc" class="transparent-c-btn btn"><span class="p-e-none"><img style="rotate: 45deg;" height="12px" width="12px" src="/assets/svg/plus.svg"></span></button>
         </header>
         <div class="content">
             <span>
                 <label for="inviteCodeIN">Code</label>
                 <input value="<%= InviteCode %>" placeholder="code here" id="inviteCodeIN" type="text" readonly>
-                <button id="inviteCodeCopyBTN" class="transparent-c-btn flex-c btn"> <span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy-icon.svg"></span></button>
+                <button id="inviteCodeCopyBTN" class="transparent-c-btn flex-c btn"> <span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy.svg"></span></button>
             </span>
             <span>
                 <label for="inviteLinkIN">Link</label>
                 <input value="<%=`${url}/register?InviteCode=${InviteCode}`%>" placeholder="link here" id="inviteLinkIN" type="text" readonly>
-                <button id="inviteLinkCopyBTN" class="transparent-c-btn flex-c btn"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy-icon.svg"></span></button>
+                <button id="inviteLinkCopyBTN" class="transparent-c-btn flex-c btn"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/copy.svg"></span></button>
             </span>
         </div>
     </div>
@@ -106,7 +104,7 @@
                                     <h4>Edit</h4>
                                 </div>
                                 <div class="delete-btn">
-                                    <button class="transparent-c-btn flex-c btn" name="sBtn" type="submit" value="2"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/bin-icon.svg"></span></button>
+                                    <button class="transparent-c-btn flex-c btn" name="sBtn" type="submit" value="2"><span class="p-e-none"><img height="20px" width="20px" src="/assets/svg/bin.svg"></span></button>
                                 </div>
                             </section>
 
@@ -147,7 +145,7 @@
                             <p> <%=element.name%> </p>
                         </section>
                         <section class="edit-btn">
-                            <button id="editBtn" class="transparent-c-btn flex-c btn" value="<%=element.id%>"><span class="p-e-none"><img height="22px" width="22px" src="/assets/svg/edit-icon.svg"></span></button>
+                            <button id="editBtn" class="transparent-c-btn flex-c btn" value="<%=element.id%>"><span class="p-e-none"><img height="22px" width="22px" src="/assets/svg/edit.svg"></span></button>
                         </section>
                         
                     </article>

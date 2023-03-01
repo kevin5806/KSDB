@@ -35,25 +35,6 @@ document.querySelectorAll('#menuBtn').forEach(button => {
     });
 });
 
-document.querySelector('#log-btn-o').addEventListener('click', () => {
-    document.getElementById("log-menu").classList.remove("none");
-
-    document.getElementById("menuBtn").click();
-})
-
-document.querySelector('#log-btn-c').addEventListener('click', () => {
-    document.getElementById("log-menu").classList.add("none");
-})
-
-//controlla se EJS ha come ritorno un errore se è così apre il popup addData
-if (document.getElementById("addDataSB").value == true) {
-
-    document.getElementById("addData").classList.remove("none");
-    document.getElementById("addDataBtn").classList.add("btn-add-o");
-    document.getElementById("addDataBtn").value = 1;
-
-}
-
 document.querySelectorAll('#addDataBtn').forEach(button => {
     button.addEventListener('click', event => {
 

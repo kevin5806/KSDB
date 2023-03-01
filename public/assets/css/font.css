@@ -23,3 +23,15 @@
     font-style: normal;
     src: url(../fonts/TiltNeon.ttf);
 }
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    src: url(../fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'RobotoCondensed';
+    font-style: normal;
+    src: url(../fonts/RobotoCondensed-Regular.ttf);
+}

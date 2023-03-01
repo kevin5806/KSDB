@@ -6,7 +6,7 @@
     --clr-accent: rgb(174, 98, 255); /* mid color */
     --clr-neutral: rgb(255, 255, 255); /* back color */
 
-    --ff-primary: 'Poppins', sans-serif;
+    --ff-primary: 'Roboto';
     --ff-secondary: 'Varela Round', sans-serif; /* usato nel conteggio soldi */
     --ff-terz: 'milky', sans-serif;
 
@@ -63,6 +63,14 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgb(152, 152, 152);
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: rgb(39, 201, 69);
 }
 
 .none {

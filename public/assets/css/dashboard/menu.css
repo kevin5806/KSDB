@@ -23,6 +23,14 @@
     width: 100%;
 }
 
+.menu .content > a,
+.menu .content > button {
+    display: flex;
+    align-items: center;
+    line-height: 5px;
+    column-gap: 5px;
+}
+
 .menu .content form {
     display: grid;
     padding:  1rem 0 .5rem 0;

@@ -22,20 +22,21 @@
 <main class="flex-c">
     <div class="container">
         <article class="title">
-            <a href="/dashboard" class="transparent-c-btn flex-c btn"><img height="22px" width="22px" src="/assets/svg/back-arrow-icon.svg"></a>
-            <h3>Settings</h3>
+            <a href="/dashboard" class="transparent-c-btn flex-c btn"><img height="22px" width="22px" src="/assets/svg/back-arrow.svg"></a>
+            <h4>Settings</h4>
         </article>
         <article class="main">
             <section class="menu">
-                <ul>
-                    <li class="btn-s2 btn">Invites</li>
-                    <li class="btn-s2 btn">Log</li>
-                    <li class="btn-s2 btn">Account</li>
+                <ul id="menuSelector">
+                    <li id="1" class="active btn-s2 btn"><img  height="16px" width="16px" src="/assets/svg/history.svg">Log</li>
+                    <li id="2" class="btn-s2 btn"><img  height="16px" width="16px" src="/assets/svg/key.svg">Invites</li>
+                    <li id="3" class="btn-s2 btn"><img  height="16px" width="16px" src="/assets/svg/account-empty.svg">Account</li>
                 </ul>
             </section>
 
-            <section class="content">
-                <div class="log">
+            <section id="content" class="content">
+
+                <div id="c1" class="log">
                     <main>
                         <% logData.reverse().forEach((data) => { %>
     
@@ -48,9 +49,42 @@
                         <% }) %>   
                     </main>
                     <div>
-                        <a class="flex-c btn btn-s3" href="/delete/log"><img height="16px" width="16px" src="/assets/svg/bin-icon-white.svg">Log</a>
+                        <a class="flex-c btn btn-s3" href="/delete/log"><img height="16px" width="16px" src="/assets/svg/white-bin.svg">Log</a>
                     </div>
                 </div>
+
+                <div id="c2" class="invite none">
+                    <main>
+                        <% inviteData.reverse().forEach((data) => { %>
+    
+                            <article>
+                                <section class="data">
+                                    <span><p class="sub">Code:</p> <p> <%= data.code %> </p></span>
+                                    <p class="sub">Creation Date</p> <p> <%= data.creationDate%> </p>
+                                    <span><p class="sub">Valid:</p> <p class="<% if (data.valid) { %> green <% } else { %> red <% } %>"> <%= data.valid %> </p></span>
+    
+                                </section>
+
+                                <% if (data.valid) { %>
+                                    <form method="post" action="/delete/invite" class="delete-btn flex-c">
+
+                                        <button type="submit" name="id" value="<%= data._id %>" class="btn flex-c">
+                                            <img height="16px" width="16px" src="/assets/svg/bin.svg">
+                                        </button>
+
+                                    </form>
+                                <% } %>
+
+                            </article>
+    
+                        <% }) %>   
+                    </main>
+                </div>
+
+                <div id="c3" class="none">
+                    <h1>Account</h1>
+                </div>
+
             </section>
         </article>
     </div>

@@ -44,9 +44,9 @@ app.use(express.static(__static));
 mongoose.set('strictQuery', true);
 
 // Connessione al database
-mongoose.connect( mongoURL , {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+mongoose.connect( mongoURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
 
 // MODELLI
@@ -90,7 +90,8 @@ const Invitecode = mongoose.model('invitecode',
 
         code: { type: String },
         creatorID: { type: String },
-        valid: { type: Boolean }       
+        valid: { type: Boolean },
+        creationDate: { type: String }
 
     })
 )
@@ -102,15 +103,17 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: mongoURL,
 
-        // indica il tempo massimo senza un utilizzo della sessione (in s)
-        touchAfter: 24 * 3600 *1 
+        touchAfter: 24 * 3600 *1, // indica il tempo massimo senza un utilizzo della sessione (in s)
+        autoRemove: 'native', // rimuovi automaticamente le sessioni scadute dal database
+        mongoOptions: { useNewUrlParser: true } // opzioni per la connessione a MongoDB
     }),
-    
+
     //chiave di criptazione per le sessioni
     secret: sessionKEY, 
     
     resave: false,
     saveUninitialized: false,
+    
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 3, // indica la durata massima di un login (in ms)
         httpOnly: true
@@ -157,9 +160,7 @@ app.get('/dashboard', async (req, res) => {
         if (await User.findOne({_id: sessionUID, ban: true}) ) return res.redirect('/logout');
 
         // Lettura dati dal database
-        const data = await Data.find({userID: sessionUID}).exec();
-        /* const inviteCC = await Invitecode.find({creatorID: sessionUID}).exec(); //inviteCC == inviteCodeCreated */
-        
+        const data = await Data.find({userID: sessionUID}).exec();        
             
         // RENDERIZZAZIONE CON DATI
         //error = 1 > campi di input vuoti
@@ -197,9 +198,14 @@ app.get('/settings', async (req, res) => {
         if (userData.ban) return res.redirect('/logout');
 
         // Download dati dal database
-        const logData = await LOG.find({userID: sessionUID}).exec();
 
-        res.render('settings', {logData: logData});
+        //log di accesso del utente
+        const logData = await LOG.find({userID: sessionUID}).exec();
+        //inviti creati dal utente
+        const inviteData = await Invitecode.find({creatorID: sessionUID}).exec();
+
+        // error 1 > 
+        res.render('settings', {error: req.query.error ,logData: logData, inviteData: inviteData});
 
     } catch (err) {
 
@@ -293,7 +299,7 @@ app.get('/logout', async (req, res) => {
 })
 
 
-app.get('/invite/generate', async (req, res) => {
+app.get('/generate/invite', async (req, res) => {
     try {
 
         // Verifica l'autenticazione
@@ -311,7 +317,8 @@ app.get('/invite/generate', async (req, res) => {
 
             code: code,
             creatorID: sessionUID,
-            valid: true
+            valid: true,
+            creationDate: new Date()
 
         }).save();
 
@@ -473,6 +480,30 @@ app.get('/delete/log', async (req, res) => {
 
 })
 
+app.post('/delete/invite', async (req, res) => {
+    
+    try {
+
+        // Verifica l'autenticazione
+        if (!req.session.auth) return res.redirect('/login?error=4');
+
+        const sessionUID = req.session.userID;
+
+        //se l'utente è bannato viene reindirizzato al logout
+        if (await User.findOne({_id: req.session.userID, ban: true}) ) return res.redirect('/logout');
+
+        //eliminazione log
+        await Invitecode.findOneAndRemove({ _id: req.body.id, creatorID: sessionUID, valid: true });
+
+        res.redirect('/settings');
+
+    } catch (err) {
+
+        res.status(500).send({err});
+
+    }
+
+})
 
 //ottimizzata
 app.post('/data', async (req, res) => {
