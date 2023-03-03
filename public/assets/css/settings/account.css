@@ -1,0 +1,73 @@
+.account {
+    overflow-y: scroll;
+    height: 41.9rem;
+}
+
+.account main {
+    display: flex;
+
+    justify-content: center;
+    flex-flow: wrap;
+
+    margin: 1rem;
+
+    row-gap: 2rem;
+    column-gap: 2rem;
+}
+
+.account main article {
+    display: flex;
+    position: relative;
+
+    height: 18rem;
+    width: 18rem;
+    
+    border: 2px solid rgb(229, 231, 237);
+    border-radius: 1rem;
+
+    box-shadow: 0px 0px 15px 3px rgba(0, 0, 0, 0.15);
+}
+
+.account main article section {
+    margin: 1rem;
+}
+
+@media (width < 500px)  {
+    /* phone mode */
+    .account {
+        height: 38.4rem;
+    }
+}
+
+.account .delete section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    row-gap: 10px;
+}
+
+.account .delete section > p {
+    line-height: 1.2em;
+    padding: .5rem;
+    border: solid 1px #808080;;
+    border-radius: 6px;
+    background-color: rgba(238, 238, 238, 0.35);
+}
+
+.account .delete .content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.account .delete .content .error {
+    color: red;
+    border: 1px solid rgba(226, 100, 100, 0.735);
+}
+
+.account .delete .content form {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    row-gap: 8px;
+}

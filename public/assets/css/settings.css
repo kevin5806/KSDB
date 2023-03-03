@@ -18,19 +18,17 @@ html, body , main{
     min-width: 20rem;
     max-width: 70rem;
 
-    margin: 3rem;
+    margin: 1rem;
     
     border: 2px solid rgb(229, 231, 237);
-    border-radius: 15px;
+    border-radius: 1rem;
 
     box-shadow: 0px 0px 15px 3px rgba(0, 0, 0, 0.15);
 
     overflow: hidden;
-
-    
 }
 
-.title {
+.container > .title {
     display: flex;
     align-items: center;
     column-gap: .5rem;
@@ -77,4 +75,25 @@ html, body , main{
 .main .content {
     display: flex;
     flex: 1;
+}
+
+.main .content > div {
+    width: 100%;
+}
+
+@media (width < 500px)  {
+    /* phone mode */
+    .main {
+        flex-direction: column;
+    }
+
+    .main .menu ul {
+        flex-direction: row;
+        column-gap: 10px;
+    }
+
+    .main .menu {
+        border-right: none;
+        border-bottom: solid rgba(178, 178, 178, 0.6) 2px;
+    }
 }

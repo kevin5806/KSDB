@@ -429,13 +429,13 @@ app.post('/delete/account', async (req, res) => {
         const password = req.body.password;
         
         // Verifica l'input inserito
-        if (typeof password !== "string") return res.redirect('/dashboard?error=3');
+        if (typeof password !== "string") return res.redirect('/settings?error=3');
 
         // Controllo password inserita e password del account
         const result = await bcrypt.compare(password, userData.password) //non togliere mai await
 
         // Se le password non cobaciano restituisce un errore
-        if (!result) return res.redirect('/dashboard?error=3');
+        if (!result) return res.redirect('/settings?error=3');
 
         // Elimina i dati dell'account in parallelo
         await Promise.all([

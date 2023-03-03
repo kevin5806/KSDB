@@ -42,7 +42,7 @@
     
                             <article>
                                 <p class="sub">Client</p> <p> <%= data.client %> </p>
-                                <p class="sub">Data</p> <p> <%= data.date %> </p>
+                                <p class="sub">Date</p> <p> <%= data.date %> </p>
                                 <span><p class="sub">IP: </p> <p> <%= data.ip%> </p></span>
                             </article>
     
@@ -59,7 +59,7 @@
     
                             <article>
                                 <section class="data">
-                                    <span><p class="sub">Code:</p> <p> <%= data.code %> </p></span>
+                                    <p class="sub">Code</p> <p> <%= data.code %> </p>
                                     <p class="sub">Creation Date</p> <p> <%= data.creationDate%> </p>
                                     <span><p class="sub">Valid:</p> <p class="<% if (data.valid) { %> green <% } else { %> red <% } %>"> <%= data.valid %> </p></span>
     
@@ -81,8 +81,47 @@
                     </main>
                 </div>
 
-                <div id="c3" class="none">
-                    <h1>Account</h1>
+                <div id="c3" class="account none">
+
+                    <main>
+                        <article class="none">
+                            <section>
+                                <h1>1</h1>
+                            </section>
+                        </article>
+
+                        <article class="none">
+                            <section>
+                                <h1>2</h1>
+                            </section>
+                        </article>
+
+                        <article class="none">
+                            <section>
+                                <h1>3</h1>
+                            </section>
+                        </article>
+
+                        <article class="delete">
+                            <section>
+
+                                <h4>Delete Account</h4>
+
+                                <p>Warning all your data will be deleted, sessions excluded and you will be kicked out of your account</p>
+
+                                <div class="content">
+                                    <form method="post" action="/delete/account">
+                                        <% if (error == 3) { %> <p class="error flex-c in-s1">Wrong Password</p> <% } %>
+                                        
+                                        <input class="in-s1" placeholder="Account password" type="password" name="password">
+
+                                        <button class="btn btn-s3" type="submit">Delete Account</button>
+                                    </form>
+                                </div>
+                            </section>
+                        </article>
+                    </main>
+                    
                 </div>
 
             </section>

@@ -97,10 +97,6 @@
 
 }
 
-.invite-code label {
-    font-weight: bold;  
-}
-
 .invite-code input {
     position: relative;
     border-radius: 6px;
