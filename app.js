@@ -15,10 +15,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //url del database
-const mongoURL = process.env.DB_URL;
+const mongoURL = process.env.DB_URL || 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/ksdbDEV';
 
 //chiave di criptazione per la generazione sessioni
-const sessionKEY = process.env.SESSION_KEY;
+const sessionKEY = process.env.SESSION_KEY || 'EsHnsaShdsS44225KbPeSsdhVmYq';
 
 // ######### Impostazioni AppExpress ##############
 
