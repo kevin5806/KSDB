@@ -4,7 +4,7 @@
   "description": "a web app for storing debt data",
   "main": "app.js",
   "scripts": {
-    "start": "node app"
+    "start": "node app.js"
   },
   "author": "kevin leoni",
   "license": "ISC",
