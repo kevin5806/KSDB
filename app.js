@@ -3,6 +3,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 const uuid = require('uuid');
+const dotenv = require('dotenv'); dotenv.config();
 const helmet = require('helmet');
 const bcrypt = require('bcrypt');
 
