@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //url del database
-const mongoURL = process.env.DB_URL || 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/ksdbDEV';
+const mongoURL = process.env.DB_URL || 'mongodb+srv://kevinserv:clXmiy7Q0Ig5rRiW@kevincluster.svejfwa.mongodb.net/ksdb';
 
 //chiave di criptazione per la generazione sessioni
 const sessionKEY = process.env.SESSION_KEY || 'EsHnsaShdsS44225KbPeSsdhVmYq';
