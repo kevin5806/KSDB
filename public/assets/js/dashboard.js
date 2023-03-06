@@ -1,3 +1,7 @@
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/dashboard' });
+}
+
 document.querySelectorAll('#editBtn').forEach(button => {
     button.addEventListener('click', event => {
 

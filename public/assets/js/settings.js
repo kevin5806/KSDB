@@ -1,3 +1,7 @@
+if ('serviceWorker' in navigator) { 
+    navigator.serviceWorker.register('/pwa/sw.js', { scope: '/settings'});
+}
+
 let selected = 1;
 
 document.querySelectorAll('#menuSelector > li').forEach(li => {
