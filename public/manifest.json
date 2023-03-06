@@ -100,10 +100,35 @@
     {
       "src": "/assets/images/favi/ks-logo-pwa.png",
       "type": "image/png",
-      "sizes": "320x320"
+      "sizes": "1024x1024"
     }
   ],
-  "shortcuts": [],
+  "shortcuts": [
+    {
+      "name": "Settings",
+      "url": "/Settings"
+    },
+    {
+      "name": "Create Invite",
+      "url": "/generate/invite",
+      "description": "Create a invite for other people, login needed"
+    },
+    {
+      "name": "Delete Log",
+      "url": "/delete/log",
+      "description": "Delete your login logs, login needed"
+    }
+  ],
   "lang": "en",
-  "prefer_related_applications": false
+  "prefer_related_applications": false ,
+  "display_override": [
+    "standalone"
+  ],
+  "iarc_rating_id": "14",
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://ksdb.azurewebsites.net"
+    }
+  ]
 }
