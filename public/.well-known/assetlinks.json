@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "net.azurewebsites.ksdb.twa",
+                     "sha256_cert_fingerprints": ["05:54:86:62:3D:5B:85:B9:6A:7A:8A:DF:F6:FB:A0:54:AE:8D:07:DD:ED:07:D8:9E:00:56:5D:8B:2B:35:60:25"] }
+      }
+]
