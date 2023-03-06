@@ -117,25 +117,25 @@
       "name": "Dashboard",
       "url": "/dashboard",
       "description": "The main page of the app, login needed",
-      "icons": [{ "src": "/pwa/images/dashboard.png", "sizes": "96x98" }]
+      "icons": [{ "src": "/pwa/images/dashboard.png", "sizes": "96x96" }]
     },
     {
       "name": "Settings",
       "url": "/settings",
       "description": "Settings where you can change your preferences, login needed",
-      "icons": [{ "src": "/pwa/images/settings.png", "sizes": "96x98" }]
+      "icons": [{ "src": "/pwa/images/settings.png", "sizes": "96x96" }]
     },
     {
       "name": "Create Invite",
       "url": "/generate/invite",
       "description": "Create a invite for other people, login needed",
-      "icons": [{ "src": "/pwa/images/invite.png", "sizes": "96x98" }]
+      "icons": [{ "src": "/pwa/images/invite.png", "sizes": "96x96" }]
     },
     {
       "name": "Log Out",
       "url": "/logout",
       "description": "Delete your login logs, login needed",
-      "icons": [{ "src": "/pwa/images/logout.png", "sizes": "96x98" }]
+      "icons": [{ "src": "/pwa/images/logout.png", "sizes": "96x96" }]
     }
   ],
 
