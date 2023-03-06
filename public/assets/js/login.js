@@ -1,3 +1,5 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/login' });
+    navigator.serviceWorker.register(
+      '/sw.js'
+    );
 }

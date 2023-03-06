@@ -1,5 +1,7 @@
-if ('serviceWorker' in navigator) { 
-    navigator.serviceWorker.register('/pwa/sw.js', { scope: '/settings'});
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(
+      '/sw.js'
+    );
 }
 
 let selected = 1;

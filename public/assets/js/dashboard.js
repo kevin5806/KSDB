@@ -1,5 +1,7 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/dashboard' });
+    navigator.serviceWorker.register(
+      '/sw.js'
+    );
 }
 
 document.querySelectorAll('#editBtn').forEach(button => {

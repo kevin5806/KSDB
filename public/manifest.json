@@ -1,4 +1,6 @@
 {
+  "id": "/dashboard",
+  "start_url": "/dashboard",
   "background_color": "#ffffff",
   "description": "app-for-saving-your-debt-and-your-friends-one",
   "dir": "auto",
@@ -7,7 +9,6 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "KS Debt",
-  "start_url": "/dashboard",
   "theme_color": "#ffffff",
   "categories": [
     "business",
@@ -102,6 +103,12 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
+    },
+    {
+      "src": "/pwa/images/ks-logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
 
@@ -110,25 +117,25 @@
       "name": "Dashboard",
       "url": "/dashboard",
       "description": "The main page of the app, login needed",
-      "icons": [{ "src": "/pwa/images/dashboard.png", "sizes": "48x48" }]
+      "icons": [{ "src": "/pwa/images/dashboard.png", "sizes": "96x98" }]
     },
     {
       "name": "Settings",
       "url": "/settings",
       "description": "Settings where you can change your preferences, login needed",
-      "icons": [{ "src": "/pwa/images/settings.png", "sizes": "48x48" }]
+      "icons": [{ "src": "/pwa/images/settings.png", "sizes": "96x98" }]
     },
     {
       "name": "Create Invite",
       "url": "/generate/invite",
       "description": "Create a invite for other people, login needed",
-      "icons": [{ "src": "/pwa/images/invite.png", "sizes": "48x48" }]
+      "icons": [{ "src": "/pwa/images/invite.png", "sizes": "96x98" }]
     },
     {
       "name": "Log Out",
       "url": "/logout",
       "description": "Delete your login logs, login needed",
-      "icons": [{ "src": "/pwa/images/logout.png", "sizes": "48x48" }]
+      "icons": [{ "src": "/pwa/images/logout.png", "sizes": "96x98" }]
     }
   ],
 
