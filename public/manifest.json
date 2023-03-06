@@ -1,15 +1,17 @@
 {
   "background_color": "#ffffff",
-  "description": "ksdb",
+  "description": "app-for-saving-your-debt-and-your-friends-one",
   "dir": "auto",
   "display": "standalone",
-  "name": "kevinserv db",
+  "name": "KevinServDB Debt",
   "orientation": "any",
   "scope": "/",
-  "short_name": "ksdb",
-  "start_url": "/",
-  "theme_color": "#ffffff",
+  "short_name": "KSdb Debt",
+  "start_url": "/dashboard",
+  "theme_color": "#fdfdfd",
   "categories": [
+    "business",
+    "finance",
     "utilities"
   ],
   "screenshots": [
@@ -96,11 +98,12 @@
   ],
   "icons": [
     {
-      "src": "/assets/images/favi/favicon.png",
+      "src": "/assets/images/favi/ks-logo-pwa.png",
       "type": "image/png",
       "sizes": "320x320"
     }
   ],
   "shortcuts": [],
-  "lang": "en"
+  "lang": "en",
+  "prefer_related_applications": false
 }
