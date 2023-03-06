@@ -135,8 +135,13 @@
     </div>
 </main>
 
+<script> 
+    if ('serviceWorker' in navigator) { 
+        navigator.serviceWorker.register('/pwa/sw.js', { scope: '/settings'});
+    } 
+</script>
+
 <script src="/assets/js/settings.js"></script>
-<script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/settings' }) } </script>
 
 </body>
 </html>

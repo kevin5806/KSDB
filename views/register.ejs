@@ -16,41 +16,46 @@
 </head>
 <body>
 
-    <header>
-        <nav>
-            <ul>
-                <li><a draggable="false" href="/"><img draggable="false" class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
-                <li><a draggable="false" href="/register">Register</a></li>
-                <li><a draggable="false" href="/login">Login</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    
-    <main id="main">
-            <article class="flex-c">
-                <form action="/register" method="post">
+<header>
+    <nav>
+        <ul>
+            <li><a draggable="false" href="/"><img draggable="false" class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
+            <li><a draggable="false" href="/register">Register</a></li>
+            <li><a draggable="false" href="/login">Login</a></li>
+        </ul>
+    </nav>
+</header>
 
-                    <input value="<%= InviteCode %>" name="code" type="text" placeholder="Invite Code">
-                    <span>
-                        <input name="name" type="text" placeholder="Name">
-                        <input name="surname" type="text" placeholder="Surname">
-                    </span>
-                    <span>
-                        <input name="user" type="text" placeholder="Username">
-                        <input name="password" type="password" placeholder="Password">
-                    </span>
 
-                    <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
-                    <% if (error == 2) { %> <div class="error-c"> <p class="error"> Invalid invite code </p> </div> <% } %>
-                    <% if (error == 3) { %> <div class="error-c"> <p class="error"> Invite code has already been used </p> </div> <% } %>
-                    <% if (error == 4) { %> <div class="error-c"> <p class="error"> Username already taken </p> </div> <% } %>
-                    
-                    <button type="submit" class="btn-login btn-s1 btn">Register</button>
-                </form>
-            </article>
-    </main>
-    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/register' }) } </script>
+<main id="main">
+        <article class="flex-c">
+            <form action="/register" method="post">
+
+                <input value="<%= InviteCode %>" name="code" type="text" placeholder="Invite Code">
+                <span>
+                    <input name="name" type="text" placeholder="Name">
+                    <input name="surname" type="text" placeholder="Surname">
+                </span>
+                <span>
+                    <input name="user" type="text" placeholder="Username">
+                    <input name="password" type="password" placeholder="Password">
+                </span>
+
+                <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
+                <% if (error == 2) { %> <div class="error-c"> <p class="error"> Invalid invite code </p> </div> <% } %>
+                <% if (error == 3) { %> <div class="error-c"> <p class="error"> Invite code has already been used </p> </div> <% } %>
+                <% if (error == 4) { %> <div class="error-c"> <p class="error"> Username already taken </p> </div> <% } %>
+                
+                <button type="submit" class="btn-login btn-s1 btn">Register</button>
+            </form>
+        </article>
+</main>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/register' });
+    }
+</script>
 
 </body>
 </html>

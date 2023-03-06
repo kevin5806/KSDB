@@ -16,33 +16,38 @@
 </head>
 <body>
 
-    <header>
-        <nav>
-            <ul>
-                <li><a draggable="false" href="/"><img draggable="false" class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
-                <li><a draggable="false" href="/login">Login</a></li>
-                <li><a draggable="false" href="/register">Register</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    
-    <main id="main">
-            <article class="flex-c">
-                <form action="/login" method="post">
-                    <input name="user" type="text" placeholder="Username">
-                    <input name="password" type="password" placeholder="Password">
+<header>
+    <nav>
+        <ul>
+            <li><a draggable="false" href="/"><img draggable="false" class="logo" src="/assets/images/KS-logo.png" alt="logo"></a></li>
+            <li><a draggable="false" href="/login">Login</a></li>
+            <li><a draggable="false" href="/register">Register</a></li>
+        </ul>
+    </nav>
+</header>
 
-                    <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
-                    <% if (error == 2) { %> <div class="error-c"> <p class="error"> Wrong User or Password </p> </div> <% } %>
-                    <% if (error == 3) { %> <div class="error-c"> <p class="error"> Banned User </p> </div> <% } %>
-                    <% if (error == 4) { %> <div class="error-c"> <p class="error"> Login First </p> </div> <% } %>
 
-                    <button type="submit" class="btn-login btn-s1 btn">Login</button>
-                </form>
-            </article>
-    </main>
-    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/login' }) } </script>
+<main id="main">
+        <article class="flex-c">
+            <form action="/login" method="post">
+                <input name="user" type="text" placeholder="Username">
+                <input name="password" type="password" placeholder="Password">
+
+                <% if (error == 1) { %> <div class="error-c"> <p class="error"> Invalid input </p> </div> <% } %>
+                <% if (error == 2) { %> <div class="error-c"> <p class="error"> Wrong User or Password </p> </div> <% } %>
+                <% if (error == 3) { %> <div class="error-c"> <p class="error"> Banned User </p> </div> <% } %>
+                <% if (error == 4) { %> <div class="error-c"> <p class="error"> Login First </p> </div> <% } %>
+
+                <button type="submit" class="btn-login btn-s1 btn">Login</button>
+            </form>
+        </article>
+</main>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/login' });
+    }
+</script>
 
 </body>
 </html>
