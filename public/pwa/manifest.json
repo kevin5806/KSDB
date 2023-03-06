@@ -8,7 +8,7 @@
   "scope": "/",
   "short_name": "KS Debt",
   "start_url": "/dashboard",
-  "theme_color": "#fdfdfd",
+  "theme_color": "#ffffff",
   "categories": [
     "business",
     "finance",
@@ -100,7 +100,8 @@
     {
       "src": "/pwa/images/ks-logo.png",
       "type": "image/png",
-      "sizes": "1024x1024"
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
 

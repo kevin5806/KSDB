@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/login.css">
     <link rel="shortcut icon" href="/assets/images/favi/favicon.png" type="image/x-icon">
+    
+    <!-- pwa -->
     <link rel="manifest" href="/pwa/manifest.json">
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="apple-touch-icon" href="/pwa/images/ks-logo-ios.png">
 
     <title>KevinServ DB - Login</title>
 </head>
@@ -38,7 +42,7 @@
                 </form>
             </article>
     </main>
-    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/' }) } </script>
+    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/login' }) } </script>
 
 </body>
 </html>

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="Dashboard, here you can view all your data and access all the website">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/dashboard.css">
     <link rel="shortcut icon" href="/assets/images/favi/favicon.png" type="image/x-icon">
+    
+    <!-- pwa -->
     <link rel="manifest" href="/pwa/manifest.json">
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="apple-touch-icon" href="/pwa/images/ks-logo-ios.png">
 
     <title>KevinServ DB - Dashboard</title>
 </head>
@@ -168,7 +171,7 @@
 </main>
 
 <script src="/assets/js/dashboard.js"></script>
-<script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/' }) } </script>
+<script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/dashboard' }) } </script>
 
 </body>
 </html>
