@@ -6,7 +6,7 @@
   "name": "KevinServDB Debt",
   "orientation": "any",
   "scope": "/",
-  "short_name": "KSdb Debt",
+  "short_name": "KS Debt",
   "start_url": "/dashboard",
   "theme_color": "#fdfdfd",
   "categories": [
@@ -98,37 +98,46 @@
   ],
   "icons": [
     {
-      "src": "/assets/images/ks-logo-pwa.png",
+      "src": "/pwa/images/ks-logo.png",
       "type": "image/png",
       "sizes": "1024x1024"
     }
   ],
+
   "shortcuts": [
     {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "description": "The main page of the app, login needed",
+      "icons": [{ "src": "/pwa/images/dashboard.png", "sizes": "48x48" }]
+    },
+    {
       "name": "Settings",
-      "url": "/Settings"
+      "url": "/settings",
+      "description": "Settings where you can change your preferences, login needed",
+      "icons": [{ "src": "/pwa/images/settings.png", "sizes": "48x48" }]
     },
     {
       "name": "Create Invite",
       "url": "/generate/invite",
-      "description": "Create a invite for other people, login needed"
+      "description": "Create a invite for other people, login needed",
+      "icons": [{ "src": "/pwa/images/invite.png", "sizes": "48x48" }]
     },
     {
-      "name": "Delete Log",
-      "url": "/delete/log",
-      "description": "Delete your login logs, login needed"
+      "name": "Log Out",
+      "url": "/logout",
+      "description": "Delete your login logs, login needed",
+      "icons": [{ "src": "/pwa/images/logout.png", "sizes": "48x48" }]
     }
   ],
+
   "lang": "en",
+
   "prefer_related_applications": false ,
+
   "display_override": [
     "standalone"
   ],
-  "iarc_rating_id": "14",
-  "related_applications": [
-    {
-      "platform": "web",
-      "url": "https://ksdb.azurewebsites.net"
-    }
-  ]
+
+  "iarc_rating_id": "14"
 }

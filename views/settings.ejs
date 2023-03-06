@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/settings.css">
     <link rel="shortcut icon" href="/assets/images/favi/favicon.png" type="image/x-icon">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/pwa/manifest.json">
 
     <title>KevinServ DB - Settings</title>
 </head>
@@ -21,7 +21,7 @@
         </ul>
     </nav>
 </header>
-<main class="flex-c">
+<main>
     <div class="container">
         <article class="title">
             <a href="/dashboard" class="transparent-c-btn flex-c btn"><img height="22px" width="22px" src="/assets/svg/back-arrow.svg"></a>
@@ -132,7 +132,7 @@
 </main>
 
 <script src="/assets/js/settings.js"></script>
-<script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/sw.js', { scope: '/' }) } </script>
+<script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register( '/pwa/sw.js', { scope: '/' }) } </script>
 
 </body>
 </html>
