@@ -599,7 +599,7 @@ app.post('/dataedit', async (req, res) => {
         
         const data = await Data.findOne({userID: sessionUID, _id: id });
 
-        if (sBtn == 1) {
+        if (sBtn === 1) {
             // inviato con il pulsante normale
             
             if (sign === 1) {
@@ -618,7 +618,7 @@ app.post('/dataedit', async (req, res) => {
             if (operation === 1) {
 
                 // Operazione ADD
-                data.sum += sum;
+                data.sum = Number(data.sum + sum).toFixed(2)
 
             } else {
 
@@ -630,7 +630,7 @@ app.post('/dataedit', async (req, res) => {
             // Salva il documento modificato
             await data.save();
 
-        } else if (sBtn == 2) {
+        } else if (sBtn === 2) {
             // inviato con il pulsante delete
 
             // Elimina il dato dal database
